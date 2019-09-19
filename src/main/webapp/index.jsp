@@ -87,7 +87,25 @@
 						<li class="divider">
 						</li>
 						<li>
-							 <a href="#" style="color:black;">结果显示方式</a>
+							 <a href="#" style="color:black;" data-toggle="dropdown" class="dropdown-toggle">结果显示方式</a>
+							<ul style="text-align: right;">
+								<li>
+<%--									<a href="#" style="color:black;" onclick="javascript:zhuzhuangChart();return false;">柱状图</a>--%>
+									<a href="#" style="color:black;" onclick="javascript:showBarChart();return false;">柱状图</a>
+								</li>
+								<li>
+<%--									<a href="#" style="color:black;" onclick="javascript:zhexianChart();return false;">折线图</a>--%>
+									<a href="#" style="color:black;" onclick="javascript:showLineChart();return false;">折线图</a>
+								</li>
+								<li>
+									<a href="#" style="color:black;" onclick="javascript:bingChart();return false;">饼图</a>
+<%--									<a href="#" style="color:black;" onclick="javascript:showPieChart();return false;">饼图</a>--%>
+								</li>
+								<li>
+									<a href="#" style="color:black;" onclick="javascript:leidaChart();return false;">雷达图</a>
+<%--									<a href="#" style="color:black;" onclick="javascript:showRadarChart();return false;">雷达图</a>--%>
+								</li>
+							</ul>
 						</li>
 						<li class="divider">
 						</li>
@@ -163,7 +181,7 @@
 				<span class="glyphicon glyphicon-user"></span> User
 			</button>
             <li class="layui-nav-item">
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="simpleSearch">运行计算 </button>
+                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="calculation();" id="calculateBtn">运行计算 </button>
             </li>
         </ul>
 
@@ -207,7 +225,7 @@
 								</DIV>
 							</li>
 							<li class="layui-nav-item">园区类型
-								<select class="form-control" style="width:180px;">
+								<select class="form-control" style="width:180px;" id="type">
 									<option value="0" slected>经贸合作区</option>
 									<option value="1">工业园</option> 
 									<option value="2">科技园</option>
@@ -218,7 +236,7 @@
 								</select>
 							</li>
 							<li class="layui-nav-item">自定义模式
-								<select class="form-control" style="width:180px;">
+								<select class="form-control" style="width:180px;" id="customize">
 									<option value="0" slected>否</option>
 									<option value="1">是</option> 
 								</select>
@@ -246,7 +264,7 @@
         </div>
     </div>
 
-    <div class="layui-body left-nav-body" style="margin-left:20px;">
+    <div class="layui-body left-nav-body">
         <!-- 内容主体区域 -->
 
         <!--左边文章列表-->
@@ -258,7 +276,9 @@
 						<tr><td><b>数据输入</b></td></tr>
 						<tr><td>
 							<div class="form-group">
-							         文件输入<br><input type="file" id="inputfile" class="form-control">
+							         文件输入<button type="button" class="btn btn-default" style="margin-left: 0px">确定</button>
+									 <br><input type="file" id="inputFile" class="form-control">
+
 						    </div>
 						</td></tr>
 						<tr><td>数据输入</td></tr>
@@ -290,12 +310,7 @@
                 </div>
                 <div id="page">
 					<div class="panel panel-default" style="height:450px;">
-					    <div class="panel-body">
-					        指数显示界面<br>
-                    	说明：如果为单个园区某一年份评价，直接显示一个数值，并显示指数数值的意义；如为某一园区
-                    	时间序列数据、多个园区截面数据、多园区多年份面板数据，则采取柱状图、条形图、折线图、饼图
-                    	、雷达图等显示，不显示指数数值意义。
-					    </div>
+					    <div id="chartContainer" style="height:400px;width:500px;"></div>
 					</div>
                 </div>
             </div>
@@ -323,6 +338,9 @@
 <script src='static/js/jquery/jquery.min.js'></script>
 <script src='static/js/pdfobject.js'></script>
 <script src="static/plug/qrcodejs/qrcode.js"></script>
+<script src="static/js/canvasjs.min.js"></script>
+<!-- ECharts单文件引入 -->
+<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
 <script>
 
     // js全局变量
@@ -864,5 +882,470 @@
             }
         });
     });
+
+    function zhuzhuangChart(){
+		// 路径配置
+		require.config({
+			paths: {
+				echarts: 'http://echarts.baidu.com/build/dist'
+			}
+		});
+
+		// 使用
+		require(
+				[
+					'echarts',
+					'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
+				],
+				function (ec) {
+					// 基于准备好的dom，初始化echarts图表
+					var myChart = ec.init(document.getElementById('chartContainer'));
+
+					option = {
+						calculable : true,
+						xAxis : [
+							{
+								type : 'category',
+								data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+							}
+						],
+						yAxis : [
+							{
+								type : 'value'
+							}
+						],
+						series : [
+							{
+								name:'蒸发量',
+								type:'bar',
+								data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
+								markPoint : {
+									data : [
+										{type : 'max', name: '最大值'},
+										{type : 'min', name: '最小值'}
+									]
+								},
+								markLine : {
+									data : [
+										{type : 'average', name: '平均值'}
+									]
+								}
+							},
+							{
+								name:'降水量',
+								type:'bar',
+								data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
+								markPoint : {
+									data : [
+										{name : '年最高', value : 182.2, xAxis: 7, yAxis: 183, symbolSize:18},
+										{name : '年最低', value : 2.3, xAxis: 11, yAxis: 3}
+									]
+								},
+								markLine : {
+									data : [
+										{type : 'average', name : '平均值'}
+									]
+								}
+							}
+						]
+					};
+
+					// 为echarts对象加载数据
+					myChart.setOption(option);
+				}
+		);
+	}
+
+	function bingChart() {
+
+		// 路径配置
+		require.config({
+			paths: {
+				echarts: 'http://echarts.baidu.com/build/dist'
+			}
+		});
+
+		var data={
+			'count':4,
+			'name':['园区一','园区二','园区三','园区四'],
+			'num':[200,300,400,500]};
+
+		// 使用
+		require(
+				[
+					'echarts',
+					'echarts/chart/pie' // 使用饼图就加载pie模块，按需加载
+				],
+				function (ec) {
+					// 基于准备好的dom，初始化echarts图表
+					var myChart = ec.init(document.getElementById('chartContainer'));
+
+					var str="[";
+					for(var i=0;i<data['count'];i++)
+					{
+						var temp="{value: "+data['num'][i]+", name: "+data['name'][i]+"},";
+						// alert(temp);
+						str+=temp;
+					}
+					str+="]";
+					alert(str);
+
+					option = {
+						calculable : true,
+						series : [
+							{
+								name:'访问来源',
+								type:'pie',
+								radius : '55%',
+								center: ['50%', '60%'],
+								data:eval(str),
+								// [//序列，字典，列表
+								// 	{value:data['num'][0], name:data['name'][0]},
+								// 	{value:data['num'][1], name:data['name'][1]},
+								// 	{value:data['num'][2], name:data['name'][2]},
+								// 	{value:data['num'][3], name:data['name'][3]},
+								// ]
+							}
+						]
+					};
+
+					// 为echarts对象加载数据
+					myChart.setOption(option);
+
+
+				}
+		);
+	}
+	
+	function zhexianChart() {
+		// 路径配置
+		require.config({
+			paths: {
+				echarts: 'http://echarts.baidu.com/build/dist'
+			}
+		});
+
+		// 使用
+		require(
+				[
+					'echarts',
+					'echarts/chart/line' // 使用折线图就加载line模块，按需加载
+				],
+				function (ec) {
+					// 基于准备好的dom，初始化echarts图表
+					var myChart = ec.init(document.getElementById('chartContainer'));
+
+					option = {
+						calculable : true,
+						xAxis : [
+							{
+								type : 'category',
+								boundaryGap : false,
+								data : ['周一','周二','周三','周四','周五','周六','周日']
+							}
+						],
+						yAxis : [
+							{
+								type : 'value',
+								axisLabel : {
+									formatter: '{value} °C'
+								}
+							}
+						],
+						series : [
+							{
+								name:'最高气温',
+								type:'line',
+								data:[11, 11, 15, 13, 12, 13, 10],
+								markPoint : {
+									data : [
+										{type : 'max', name: '最大值'},
+										{type : 'min', name: '最小值'}
+									]
+								},
+								markLine : {
+									data : [
+										{type : 'average', name: '平均值'}
+									]
+								}
+							},
+							{
+								name:'最低气温',
+								type:'line',
+								data:[1, -2, 2, 5, 3, 2, 0],
+								markPoint : {
+									data : [
+										{name : '周最低', value : -2, xAxis: 1, yAxis: -1.5}
+									]
+								},
+								markLine : {
+									data : [
+										{type : 'average', name : '平均值'}
+									]
+								}
+							}
+						]
+					};
+					
+					// 为echarts对象加载数据 
+					myChart.setOption(option);
+				}
+		);
+	}
+	
+	function leidaChart() {
+		// 路径配置
+		require.config({
+			paths: {
+				echarts: 'http://echarts.baidu.com/build/dist'
+			}
+		});
+
+		var data={
+			'name':['园区一','园区二','园区三','园区四'],
+			'num':[20000,30000,40000,50000]};
+
+		// 使用
+		require(
+				[
+					'echarts',
+					'echarts/chart/radar' // 使用雷达图就加载radar模块，按需加载
+				],
+				function (ec) {
+					// 基于准备好的dom，初始化echarts图表
+					var myChart = ec.init(document.getElementById('chartContainer'));
+
+					option = {
+						polar : [
+							{
+								indicator : [
+									{ text:data['name'][0], max: data['num'][0]},
+									{ text:data['name'][1], max: data['num'][1]},
+									{ text:data['name'][2], max: data['num'][2]},
+									{ text:data['name'][3], max: data['num'][3]},
+								]
+							}
+						],
+						calculable : true,
+						series : [
+							{
+								name: '预算 vs 开销（Budget vs spending）',
+								type: 'radar',
+								data : [
+									{
+										value : [4300, 10000, 28000, 35000, 50000, 19000],
+										name : '预算分配（Allocated Budget）'
+									},
+									{
+										value : [5000, 14000, 28000, 31000, 42000, 21000],
+										name : '实际开销（Actual Spending）'
+									}
+								]
+							}
+						]
+					};
+					// 为echarts对象加载数据
+					myChart.setOption(option);
+				}
+		);
+	}
+
+	var data0 = {'type': 0,
+	    'time': [2017,2018,2019],
+	    'country': "阿富汗",
+	    'data':[[1.1,1.3,1.5,1.2],[1.7,2.3,1.1,2.3],[1.2,1.0,1.8,1.7]]};
+	var data1 = {'type': 1,
+	        'time': 2019,
+	        'country': ['USA','UK','China'],
+	        'data':[[2.1,2.3,2.1,2.6],[2.1,2.3,2.1,2.6],[2.1,2.3,2.1,2.6]]};
+
+	function showBarChart() {//柱状图
+		var data = {'type': 0,
+			'time': [2017,2018,2019],
+			'country': "阿富汗",
+			'data':[[1.1,1.3,1.5,1.2],[1.7,2.3,1.1,2.3],[1.2,1.0,1.8,1.7]]};
+		var type = data['type'];
+		charData = [];
+		var title_text;
+		if (type == 0) {
+			title_text = data['country'];
+			for (var i = 0; i < data['data'].length; i++) {
+				var column = {
+					type: "column",
+					name: data['country'] + data['time'][i] + '年的数据',
+					legendText: "" +  data['time'][i],
+					showInLegend: true,
+					dataPoints: [
+						{label: "政治风险", y: data['data'][i][0]},
+						{label: "经济风险", y: data['data'][i][1]},
+						{label: "社会风险", y: data['data'][i][2]},
+						{label: "综合风险", y: data['data'][i][3]},
+					]
+				};
+				charData.push(column);
+			}
+		} else if (type == 1) {
+			title_text = "各国家" + data['time'] + "年风险对比";
+			for (var i = 0; i < data['data'].length; i++) {
+				var column = {
+					type: "column",
+					name: data['country'][i] + data['time'] + '年的数据',
+					legendText: "" + data['country'][i],
+					showInLegend: true,
+					dataPoints: [
+						{label: "政治风险", y: data['data'][i][0]},
+						{label: "经济风险", y: data['data'][i][1]},
+						{label: "社会风险", y: data['data'][i][2]},
+						{label: "综合风险", y: data['data'][i][3]},
+					]
+				};
+				charData.push(column);
+			}
+
+		}
+
+		var chart = new CanvasJS.Chart("chartContainer", {
+			animationEnabled: true,
+			title:{
+				text: title_text
+			},
+			toolTip: {
+				shared: true
+			},
+			legend: {
+				cursor:"pointer",
+				itemclick: toggleDataSeries
+			},
+			data: charData,
+		});
+		chart.render();
+
+		function toggleDataSeries(e) {
+			if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+				e.dataSeries.visible = false;
+			}
+			else {
+				e.dataSeries.visible = true;
+			}
+			chart.render();
+		}
+	}
+
+	function showLineChart() {
+		var data = {'type': 0,
+			'time': [2017,2018,2019],
+			'country': "阿富汗",
+			'data':[[1.1,1.3,1.5,1.2],[1.7,2.3,1.1,2.3],[1.2,1.0,1.8,1.7]]};
+		var type = data['type'];
+		charData = [];
+		risk = ["政治风险","经济风险","社会风险","综合风险"];
+		var title_text;
+		if (type == 0) {
+			title_text = data['country'];
+			for (var i = 0; i < 4; i++) {
+				dataPts = [];
+				for (var j = 0; j < data['time'].length; j++) {
+					var pts = {x:new Date(data['time'][j],0,0),y:data['data'][j][i]};
+					dataPts.push(pts);
+				}
+				var line = {
+					type: "line",
+					name: risk[i],
+					showInLegend: true,
+					dataPoints: dataPts
+				};
+				charData.push(line);
+			}
+		} else if (type == 1) {
+			for (var i = 0; i < 4; i++) {
+				dataPts = [];
+				for (var j = 0; j < data['country'].length; j++) {
+					// var pts = {x:new ()}
+				}
+				var column = {
+					type: "column",
+					name: data['country'][i] + data['time'] + '年的数据',
+					legendText: "" + data['country'][i],
+					showInLegend: true,
+					dataPoints: [
+						{label: "政治风险", y: data['data'][i][0]},
+						{label: "经济风险", y: data['data'][i][1]},
+						{label: "社会风险", y: data['data'][i][2]},
+						{label: "综合风险", y: data['data'][i][3]},
+					]
+				};
+				charData.push(column);
+			}
+
+		}
+
+		var chart = new CanvasJS.Chart("chartContainer", {
+			title:{
+				text: data['country']
+			},
+			axisX: {
+				valueFormatString: "YYYY"
+			},
+			toolTip: {
+				shared: true
+			},
+			legend: {
+				cursor: "pointer",
+				itemclick: toggleDataSeries
+			},
+			data: charData
+		});
+		chart.render();
+
+		function toggleDataSeries(e) {
+			if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+				e.dataSeries.visible = false;
+			} else {
+				e.dataSeries.visible = true;
+			}
+			e.chart.render();
+		}
+	}
+	
+	function calculation() {
+		var arr=new Array();
+		$.ajax({
+			type: "get",
+			url: "${ctx}/reglogin/logout",
+			data:"",
+			success: function (data) {
+				if (data.code != 200) {
+					layer.msg(data.msg, {icon: 2});
+					return false;
+				} else {
+					layer.msg(data.msg, {icon: 1});
+					location = "${ctx}/";
+				}
+			}
+		});
+	}
+
+	document.getElementById("customize").onchange(function(){
+		//要触发的事件
+		// var str=$('#testSelect option:selected') .val();//选中的值
+		var obj=document.getElementById("customize");
+		var index=obj.selectedIndex;
+		var value=obj.options[index].value;
+		if(value.equal("是")) {
+			document.getElementById("type").disabled=true;
+		}
+	});
+	// $("#customize").onchange(function(){
+	// 	//要触发的事件
+	// 	// var str=$('#testSelect option:selected') .val();//选中的值
+	// 	var obj=document.getElementById("customize");
+	// 	var index=obj.selectedIndex;
+	// 	var value=obj.options[index].value;
+	// 	alert(value);
+	// 	if(value.equal("是")) {
+	// 		document.getElementById("type").disabled=true;
+	// 	}
+	// });
+
 </script>
 </html>

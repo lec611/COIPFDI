@@ -104,11 +104,11 @@ body {
     }
 
     .blog-main > .blog-main-left {
-        width: 66%;
+        width: 55%;
     }
 
     .blog-main > .blog-main-right {
-        width: 32%;
+        width: 42%;
     }
 
         .blog-main > .blog-main-right > .blog-module {
