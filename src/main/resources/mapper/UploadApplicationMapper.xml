@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.seu.dao.UploadApplicationDao">
+
+    <!--用户上传申请时进行持久化操作-->
+    <insert id="persist" useGeneratedKeys="true" keyProperty="id" parameterType="edu.seu.model.UploadApplication">
+        insert into upload(userID,userName,type,quota,standard,criterion,weight,goal)
+        value(#{userID},#{userName},#{type},#{quota},#{standard},#{criterion},#{weight},#{goal})
+    </insert>
+
+</mapper>
