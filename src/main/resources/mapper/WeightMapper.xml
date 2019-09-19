@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.seu.dao.WeightDao">
+    <update id="update" parameterType="edu.seu.model.Weight">
+        update weight set
+        <trim suffixOverrides="," suffix="where id = #{id}">
+            <if test="industry!=null">
+                industry = #{industry},
+            </if>
+            <if test="market!=null">
+                market = #{market},
+            </if>
+            <if test="technology!=null">
+                technology = #{technology},
+            </if>
+            <if test="hr!=null">
+                hr = #{hr},
+            </if>
+            <if test="policy!=null">
+                policy = #{policy},
+            </if>
+            <if test="capital!=null">
+                capital = #{capital},
+            </if>
+            <if test="culture!=null">
+                culture = #{culture},
+            </if>
+        </trim>
+        <where>type = #{type}</where>
+    </update>
+</mapper>
