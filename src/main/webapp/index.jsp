@@ -1326,11 +1326,14 @@
 
 		var typeObj=document.getElementById("type");
 		var typeindex=typeObj.selectedIndex;
-		var type=typeObj.options[typeindex].value;
+		var type=typeObj.options[typeindex].text;
 
 		var customizeObj=document.getElementById("customize");
 		var customizeindex=customizeObj.selectedIndex;
-		var customize=customizeObj.options[customizeindex].value;
+		var customize=customizeObj.options[customizeindex].text;
+		alert("type:"+type);
+		alert("customize"+customize);
+		alert("array:"+array[0]);
 		$.ajax({
 			type: "get",
 			url: "${ctx}/reglogin/logout",
