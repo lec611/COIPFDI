@@ -27,15 +27,20 @@ public class CalculatorController {
     @ResponseBody
     public String calculate(HttpServletRequest request, HttpServletResponse response){
         try{
-            boolean customize = (boolean) request.getSession().getAttribute("customize");
-            String str[] = (String[]) request.getParameterValues("array");
+            System.out.println("进入后台！");
+            String customize = (String) request.getSession().getAttribute("customize");
+            String str[] = request.getParameterValues("array");
             double goal;
             double array[] = new double[str.length];
             for(int i=0;i<str.length;i++){
                 array[i] = Double.parseDouble(str[i]);
             }
+            //test
+            for(int i=0;i<7;i++){
+                System.out.println(array[i]);
+            }
             //自定义模式
-            if(customize){
+            if(customize.equals("是")){
                 goal = goal(Arrays.copyOfRange(array,0,7),Arrays.copyOfRange(array,7,14));
             }
             //非自定义模式
@@ -50,6 +55,10 @@ public class CalculatorController {
                 weight[4]=temp.getPolicy();
                 weight[5]=temp.getCapital();
                 weight[6]=temp.getCulture();
+                //test
+                for(int i=0;i<7;i++){
+                    System.out.println(weight[i]);
+                }
                 goal = goal(Arrays.copyOfRange(array,0,7),weight);
             }
             response.addHeader("goal",String.valueOf(goal));
