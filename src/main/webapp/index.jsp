@@ -342,7 +342,7 @@
                         <tr>
                             <td>人员融合度</td>
                             <td><input type="text" style="border:0px" class="layui-input doc-search" id="data3"></td>
-                            <td><input type="text" style="border:0px" class="layui-input doc-search" id="weigth3"></td>
+                            <td><input type="text" style="border:0px" class="layui-input doc-search" id="weight3"></td>
                             <td><input type="text" style="border:0px" class="layui-input doc-search" id="standard3">
                             </td>
                         </tr>
@@ -362,8 +362,8 @@
                         </tr>
                         <tr>
                             <td>社会文化影响度</td>
-                            <td><input type="text" style="border:0px" class="layui-input doc-search" id="data7"></td>
-                            <td><input type="text" style="border:0px" class="layui-input doc-search" id="weigth6"></td>
+                            <td><input type="text" style="border:0px" class="layui-input doc-search" id="data6"></td>
+                            <td><input type="text" style="border:0px" class="layui-input doc-search" id="weight6"></td>
                             <td><input type="text" style="border:0px" class="layui-input doc-search" id="standard6">
                             </td>
                         </tr>
