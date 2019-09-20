@@ -1,5 +1,6 @@
 package edu.seu.controller;
 
+import com.alibaba.fastjson.JSON;
 import edu.seu.base.CodeEnum;
 import edu.seu.base.CommonResponse;
 import edu.seu.model.Weight;
@@ -23,12 +24,13 @@ public class CalculatorController {
     @Autowired
     WeightService weightService;
 
-    @RequestMapping("/calculate")
     @ResponseBody
+    @RequestMapping("/calculate")
     public String calculate(HttpServletRequest request, HttpServletResponse response){
         try{
-            System.out.println("进入后台！");
-            String customize = (String) request.getSession().getAttribute("customize");
+            String customize;
+            customize = request.getParameter("customize");
+            System.out.println("customize"+customize);
             String str[] = request.getParameterValues("array");
             double goal;
             double array[] = new double[str.length];
@@ -45,7 +47,7 @@ public class CalculatorController {
             }
             //非自定义模式
             else{
-                String type = (String)request.getSession().getAttribute("type");
+                String type = (String)request.getParameter("type");
                 Weight temp = weightService.queryByType(type);
                 double weight[] = new double[str.length];
                 weight[0]=temp.getIndustry();
@@ -62,9 +64,9 @@ public class CalculatorController {
                 goal = goal(Arrays.copyOfRange(array,0,7),weight);
             }
             response.addHeader("goal",String.valueOf(goal));
-            return new CommonResponse(CodeEnum.SUCCESS.getValue(),"计算成功").toJSONString();
+            return String.format("{'goal': %s}",goal);
         } catch (Exception e){
-            LOGGER.error(e.getMessage());
+            LOGGER.error("wjx__"+e.getMessage());
             return new CommonResponse(CodeEnum.USER_ERROR.getValue(),e.getMessage()).toJSONString();
         }
     }

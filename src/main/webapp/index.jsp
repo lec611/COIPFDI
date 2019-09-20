@@ -1405,6 +1405,7 @@
     }
 
     function calculation() {
+        debugger;
         var array = new Array(22);
         for (var i = 0; i < 7; i++) {
             array[i] = document.getElementById("data" + i);
@@ -1420,11 +1421,16 @@
         var customizeindex = customizeObj.selectedIndex;
         var customize = customizeObj.options[customizeindex].text;
         $.ajax({
-            type: 'get',
+            type: 'post',
             url: '${ctx}/calculate',
-            data: {"array": array, "type": type, "customize": customize},
+            data: {"array": JSON.stringify(array), "type": JSON.stringify(type), "customize": JSON.stringify(customize)},
             dataType: 'json',
+            traditional:true,     //默认false
+			processData: false,   // jQuery不要去处理发送的数据
+			contentType: false,   // jQuery不要去设置Content-Type请求头
             success: function (data) {
+                debugger;
+                console.log(data);
                 alert(data);
                 if (data.code != 200) {
                     layer.msg(data.msg, {icon: 2});
