@@ -1,5 +1,7 @@
 package edu.seu.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import edu.seu.base.CodeEnum;
 import edu.seu.base.CommonResponse;
 import edu.seu.model.Weight;
@@ -9,11 +11,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+import org.apache.commons.io.IOUtils;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 public class CalculatorController {
@@ -23,46 +29,49 @@ public class CalculatorController {
     @Autowired
     WeightService weightService;
 
-    @RequestMapping("/calculate")
     @ResponseBody
+    @RequestMapping(value = "/calculate")
     public String calculate(HttpServletRequest request, HttpServletResponse response){
         try{
             System.out.println("进入后台！");
-            String customize = (String) request.getSession().getAttribute("customize");
-            String str[] = request.getParameterValues("array");
-            double goal;
-            double array[] = new double[str.length];
-            for(int i=0;i<str.length;i++){
-                array[i] = Double.parseDouble(str[i]);
-            }
-            //test
-            for(int i=0;i<7;i++){
-                System.out.println(array[i]);
-            }
-            //自定义模式
-            if(customize.equals("是")){
-                goal = goal(Arrays.copyOfRange(array,0,7),Arrays.copyOfRange(array,7,14));
-            }
-            //非自定义模式
-            else{
-                String type = (String)request.getSession().getAttribute("type");
-                Weight temp = weightService.queryByType(type);
-                double weight[] = new double[str.length];
-                weight[0]=temp.getIndustry();
-                weight[1]=temp.getMarket();
-                weight[2]=temp.getTechnology();
-                weight[3]=temp.getHr();
-                weight[4]=temp.getPolicy();
-                weight[5]=temp.getCapital();
-                weight[6]=temp.getCulture();
-                //test
-                for(int i=0;i<7;i++){
-                    System.out.println(weight[i]);
-                }
-                goal = goal(Arrays.copyOfRange(array,0,7),weight);
-            }
-            response.addHeader("goal",String.valueOf(goal));
-            return new CommonResponse(CodeEnum.SUCCESS.getValue(),"计算成功").toJSONString();
+            String customize = request.getParameter("customize");
+            System.out.println(customize);
+            String str = request.getParameter("array");
+            System.out.println(str);
+//            double goal;
+//            double array[] = new double[str.length];
+//            for(int i=0;i<str.length;i++){
+//                array[i] = Double.parseDouble(str[i]);
+//            }
+//            //test
+//            for(int i=0;i<7;i++){
+//                System.out.println(array[i]);
+//            }
+//            //自定义模式
+//            if(customize.equals("是")){
+//                goal = goal(Arrays.copyOfRange(array,0,7),Arrays.copyOfRange(array,7,14));
+//            }
+//            //非自定义模式
+//            else{
+//                String type = (String)request.getSession().getAttribute("type");
+//                Weight temp = weightService.queryByType(type);
+//                double weight[] = new double[str.length];
+//                weight[0]=temp.getIndustry();
+//                weight[1]=temp.getMarket();
+//                weight[2]=temp.getTechnology();
+//                weight[3]=temp.getHr();
+//                weight[4]=temp.getPolicy();
+//                weight[5]=temp.getCapital();
+//                weight[6]=temp.getCulture();
+//                //test
+//                for(int i=0;i<7;i++){
+//                    System.out.println(weight[i]);
+//                }
+//                goal = goal(Arrays.copyOfRange(array,0,7),weight);
+//            }
+//            response.addHeader("goal",String.valueOf(goal));
+             return JSON.toJSONString("");
+//            // return new CommonResponse(CodeEnum.SUCCESS.getValue(),"计算成功").toJSONString();
         } catch (Exception e){
             LOGGER.error(e.getMessage());
             return new CommonResponse(CodeEnum.USER_ERROR.getValue(),e.getMessage()).toJSONString();

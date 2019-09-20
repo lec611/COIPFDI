@@ -1405,12 +1405,16 @@
     }
 
     function calculation() {
-        var array = new Array(22);
+        var array = [];
         for (var i = 0; i < 7; i++) {
-            array[i] = document.getElementById("data" + i);
+            //console.log(document.getElementById("data" + i));
+            array.push(document.getElementById("data" + i));
+            //array[i] = document.getElementById("data" + i);
         }
         for (var i = 0; i < 7; i++) {
-            array[7 + i] = document.getElementById("weight" + i);
+           // console.log(document.getElementById("weight" + i));
+            array.push(document.getElementById("weight" + i));
+            // array[7 + i] = document.getElementById("weight" + i);
         }
         var typeObj = document.getElementById("type");
         var typeindex = typeObj.selectedIndex;
@@ -1419,11 +1423,22 @@
         var customizeObj = document.getElementById("customize");
         var customizeindex = customizeObj.selectedIndex;
         var customize = customizeObj.options[customizeindex].text;
+        console.log(customize);
+        console.log(type);
+        console.log(JSON.stringify(array));
+        var data = {'array': JSON.stringify(array),
+                    'type': type,
+                    'customize': customize
+                    };
+        console.log(data);
         $.ajax({
-            type: 'get',
+            type: 'post',
             url: '${ctx}/calculate',
-            data: {"array": array, "type": type, "customize": customize},
+            data: data,
             dataType: 'json',
+           // traditional: true,
+           //  contentType: 'application/json', // 告诉jQuery不要去设置Content-Type请求头
+            // processData: false, // 告诉jQuery不要去处理发送的数据
             success: function (data) {
                 alert(data);
                 if (data.code != 200) {
