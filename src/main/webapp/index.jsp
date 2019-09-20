@@ -1438,7 +1438,7 @@
             dataType: 'json',
            // traditional: true,
            //  contentType: 'application/json', // 告诉jQuery不要去设置Content-Type请求头
-            // processData: false, // 告诉jQuery不要去处理发送的数据
+            // processData: false, // 告诉jQuery不  要去处理发送的数据
             success: function (data) {
                 alert(data);
                 if (data.code != 200) {
