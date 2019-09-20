@@ -284,16 +284,16 @@
 						<tr><td>数据输入</td></tr>
 					</table>
                 </div>
-                 <div id="page">
+                 <div id="tablepage">
                  	<table class="table table-hover table-bordered" style="text-align:center;margin:0px;">
 						<tr><td>指标</td><td>数值</td><td>权重</td><td>标准</td></tr>
-						<tr><td>产品融合度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-						<tr><td>市场融合度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-						<tr><td>技术融合度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-						<tr><td>人员融合度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-						<tr><td>政策依赖度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-						<tr><td>资本依赖度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-						<tr><td>社会文化影响度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
+						<tr><td>产品融合度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id="data0"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="weight0"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="standard0"></td></tr>
+						<tr><td>市场融合度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id="data1"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="weight1"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="standard1"></td></tr>
+						<tr><td>技术融合度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id="data2"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="weight2"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="standard2"></td></tr>
+						<tr><td>人员融合度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id="data3"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="weigth3"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="standard3"></td></tr>
+						<tr><td>政策依赖度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id="data4"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="weight4"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="standard4"></td></tr>
+						<tr><td>资本依赖度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id="data5"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="weight5"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="standard5"></td></tr>
+						<tr><td>社会文化影响度</td><td><input type="text" style="border:0px" class="layui-input doc-search" id="data7"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="weigth6"></td><td><input type="text" style="border:0px" class="layui-input doc-search" id="standard6"></td></tr>
 					</table>
                  </div>
             </div>
@@ -323,7 +323,7 @@
 
     <div class="layui-footer" >
         <!-- 底部固定区域 -->
-        <button class="layui-btn layui-btn-primary layui-btn-sm" id="back" style="display: none;  onclick="clickBackBtn();">
+        <button class="layui-btn layui-btn-primary layui-btn-sm" id="back" style="display: none;" >
             <i class="fa fa-chevron-left" aria-hidden="true"></i>
         </button>
     </div>
@@ -983,12 +983,10 @@
 					var str="[";
 					for(var i=0;i<data['count'];i++)
 					{
-						var temp="{value: "+data['num'][i]+", name: "+data['name'][i]+"},";
-						// alert(temp);
+						var temp="{value: "+data['num'][i]+", name: '"+data['name'][i]+"'},";
 						str+=temp;
 					}
 					str+="]";
-					alert(str);
 
 					option = {
 						calculable : true,
@@ -998,8 +996,8 @@
 								type:'pie',
 								radius : '55%',
 								center: ['50%', '60%'],
-								data:eval(str),
-								// [//序列，字典，列表
+								data:eval(str),//序列，字典，列表
+								// [
 								// 	{value:data['num'][0], name:data['name'][0]},
 								// 	{value:data['num'][1], name:data['name'][1]},
 								// 	{value:data['num'][2], name:data['name'][2]},
@@ -1102,6 +1100,7 @@
 		});
 
 		var data={
+			'count':4,
 			'name':['园区一','园区二','园区三','园区四'],
 			'num':[20000,30000,40000,50000]};
 
@@ -1115,15 +1114,24 @@
 					// 基于准备好的dom，初始化echarts图表
 					var myChart = ec.init(document.getElementById('chartContainer'));
 
+					var str="[";
+					for(var i=0;i<data['count'];i++)
+					{
+						var temp="{text: '"+data['name'][i]+"', max: "+data['num'][i]+"},";
+						str+=temp;
+					}
+					str+="]";
+
 					option = {
 						polar : [
 							{
-								indicator : [
-									{ text:data['name'][0], max: data['num'][0]},
-									{ text:data['name'][1], max: data['num'][1]},
-									{ text:data['name'][2], max: data['num'][2]},
-									{ text:data['name'][3], max: data['num'][3]},
-								]
+								indicator :eval(str)
+								// 		[
+								// 	{ text:data['name'][0], max: data['num'][0]},
+								// 	{ text:data['name'][1], max: data['num'][1]},
+								// 	{ text:data['name'][2], max: data['num'][2]},
+								// 	{ text:data['name'][3], max: data['num'][3]},
+								// ]
 							}
 						],
 						calculable : true,
@@ -1308,11 +1316,25 @@
 	}
 	
 	function calculation() {
-		var arr=new Array();
+		var array=new Array(22);
+		for(var i=0;i<7;i++){
+			array[i]=document.getElementById("data"+i);
+		}
+		for(var i=0;i<7;i++){
+			array[7+i]=document.getElementById("weight"+i);
+		}
+
+		var typeObj=document.getElementById("type");
+		var typeindex=typeObj.selectedIndex;
+		var type=typeObj.options[typeindex].value;
+
+		var customizeObj=document.getElementById("customize");
+		var customizeindex=customizeObj.selectedIndex;
+		var customize=customizeObj.options[customizeindex].value;
 		$.ajax({
 			type: "get",
 			url: "${ctx}/reglogin/logout",
-			data:"",
+			data:{'array':array,'type':type,'customize':customize},
 			success: function (data) {
 				if (data.code != 200) {
 					layer.msg(data.msg, {icon: 2});
