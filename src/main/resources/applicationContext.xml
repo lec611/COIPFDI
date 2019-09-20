@@ -18,7 +18,7 @@
 	 
 	<!-- 因为spring-mvc负责Controller层的配置，所以这里要排除Controller，防止重复配置 -->
 	<context:component-scan base-package="edu.seu.*">
-		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
 	</context:component-scan>
 	
 	<!-- 配置数据库连接池 -->

@@ -30,8 +30,9 @@ public class CalculatorController {
         try{
             String customize;
             customize = request.getParameter("customize");
-            System.out.println("customize"+customize);
+            System.out.println("customize: "+customize);
             String str[] = request.getParameterValues("array");
+            System.out.println("str: "+str);
             double goal;
             double array[] = new double[str.length];
             for(int i=0;i<str.length;i++){
@@ -64,7 +65,7 @@ public class CalculatorController {
                 goal = goal(Arrays.copyOfRange(array,0,7),weight);
             }
             response.addHeader("goal",String.valueOf(goal));
-            return String.format("{'goal': %s}",goal);
+            return JSON.toJSONString(String.format("{'goal': %s}",goal));
         } catch (Exception e){
             LOGGER.error("wjx__"+e.getMessage());
             return new CommonResponse(CodeEnum.USER_ERROR.getValue(),e.getMessage()).toJSONString();

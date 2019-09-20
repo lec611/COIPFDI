@@ -10,8 +10,7 @@
     <title>COIPFDI - 登陆页面</title>
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4,
-    initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4,initial-scale=0.8,target-densitydpi=low-dpi"/>
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
     <%--网页图标--%>
     <link rel="shortcut icon" href="static/images/COIPIB.png" type="image/x-icon">
@@ -59,10 +58,10 @@
         </div>
         <div class="layui-form-item">
             <div class="layui-input-inline">
-                <p style="text-align: left"><a href="${ctx}/register.jsp">没有账号？前往注册</a></p>
+                <p style="text-align: left"><a href="${ctx}/register">没有账号？前往注册</a></p>
             </div>
             <label class="field-wrap" style="cursor:pointer;">
-                <p style="text-align: right"><a href="${ctx}/findPassword.jsp">忘记密码？</a></p>
+                <p style="text-align: right"><a href="${ctx}/findPassword">忘记密码？</a></p>
             </label>
         </div>
         <button style="width: 100%;" class="layui-btn layui-btn-radius" lay-filter="submit" lay-submit="">登录</button>
