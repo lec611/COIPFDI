@@ -30,27 +30,31 @@ public class CalculatorController {
         try{
             String customize;
             customize = request.getParameter("customize");
-            System.out.println("customize: "+customize);
-            String str[] = request.getParameterValues("array");
-            System.out.println("str: "+str);
+            String arr = request.getParameter("array");
             double goal;
-            double array[] = new double[str.length];
-            for(int i=0;i<str.length;i++){
-                array[i] = Double.parseDouble(str[i]);
-            }
-            //test
+            String[] str = arr.substring(1,arr.length()-1).split(",");
+            double array[] = new double[str.length-1];
             for(int i=0;i<7;i++){
-                System.out.println(array[i]);
+                array[i] = Double.parseDouble(str[i].substring(1,str[i].length()-1));
             }
+
             //自定义模式
             if(customize.equals("是")){
+                for(int i=7;i<14;i++){
+                    if(str[i] != "") {
+                        array[i] = Double.parseDouble(str[i].substring(1, str[i].length() - 1));
+                        System.out.println(array[i]);
+                    }else{
+                        array[i] = 0;
+                    }
+                }
                 goal = goal(Arrays.copyOfRange(array,0,7),Arrays.copyOfRange(array,7,14));
             }
             //非自定义模式
             else{
                 String type = (String)request.getParameter("type");
                 Weight temp = weightService.queryByType(type);
-                double weight[] = new double[str.length];
+                double weight[] = new double[array.length];
                 weight[0]=temp.getIndustry();
                 weight[1]=temp.getMarket();
                 weight[2]=temp.getTechnology();
@@ -65,7 +69,7 @@ public class CalculatorController {
                 goal = goal(Arrays.copyOfRange(array,0,7),weight);
             }
             response.addHeader("goal",String.valueOf(goal));
-            return JSON.toJSONString(String.format("{'goal': %s}",goal));
+            return JSON.toJSONString(String.format("{'goal': %s}",String.format("%.4f", goal)));
         } catch (Exception e){
             LOGGER.error("wjx__"+e.getMessage());
             return new CommonResponse(CodeEnum.USER_ERROR.getValue(),e.getMessage()).toJSONString();

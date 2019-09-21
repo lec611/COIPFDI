@@ -1406,15 +1406,13 @@
 
     function calculation() {
         debugger;
-        var array = new Array(22);
+        var array = new Array(15);
         for (var i = 0; i < 7; i++) {
             array[i] = document.getElementById(("data" + i).toString()).value;
         }
-        alert(array[0]);
         for (var i = 0; i < 7; i++) {
             array[7 + i] = document.getElementById(("weight" + i).toString()).value;
         }
-        alert(array[7]);
         var typeObj = document.getElementById("type");
         var typeindex = typeObj.selectedIndex;
         var type = typeObj.options[typeindex].text;
@@ -1431,13 +1429,7 @@
                 debugger;
                 console.log(data);
                 alert(data);
-                if (data.code != 200) {
-                    layer.msg(data.msg, {icon: 2});
-                    return false;
-                } else {
-                    layer.msg(data.msg, {icon: 1});
-                    location = "${ctx}/";
-                }
+
             }
         });
     }
