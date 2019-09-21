@@ -1425,36 +1425,46 @@
             url: '${ctx}/calculate',
             data:{"array": JSON.stringify(array), "type": type, "customize": customize},
             dataType: 'json',
-            success: function (data) {
+            success: function (result) {
+                var data = eval('('+result+')')['goal'];
+                if(data<20){
+                    document.getElementById("chartContainer").innerText=data.toString()+"\n融合化发展水平很低";
+                    document.getElementById("chartContainer").style.fontSize='30px';
+                    document.getElementById("chartContainer").style.textAlign='center'
+                }
+                else if(data>=20&&data<40){
+                    document.getElementById("chartContainer").innerText=data.toString()+"\n融合化发展水平较低";
+                    document.getElementById("chartContainer").style.fontSize='30px';
+                    document.getElementById("chartContainer").style.textAlign='center';
+                }
+                else if(data>=40&&data<60){
+                    document.getElementById("chartContainer").innerText=data.toString()+"\n融合化发展水平一般";
+                    document.getElementById("chartContainer").style.fontSize='30px';
+                    document.getElementById("chartContainer").style.textAlign='center';
+                }
+                else if(data>=60&&data<80){
+                    document.getElementById("chartContainer").innerText=data.toString()+"\n融合化发展水平较高";
+                    document.getElementById("chartContainer").style.fontSize='30px';
+                    document.getElementById("chartContainer").style.textAlign='center';
+                }
+                else if(data>=80){
+                    document.getElementById("chartContainer").innerText=data.toString()+"\n融合化发展水平很高";
+                    document.getElementById("chartContainer").style.fontSize='30px';
+                    document.getElementById("chartContainer").style.textAlign='center';
+                }
                 debugger;
-                console.log(data);
+                console.log(result.type);
                 alert(data);
-
+                <%--if (data.code != 200) {--%>
+                <%--    layer.msg(data.msg, {icon: 2});--%>
+                <%--    return false;--%>
+                <%--} else {--%>
+                <%--    layer.msg(data.msg, {icon: 1});--%>
+                <%--    location = "${ctx}/";--%>
+                <%--}--%>
             }
         });
     }
-
-    // document.getElementById("customize").onchange(function(){
-    // 	//要触发的事件
-    // 	// var str=$('#testSelect option:selected') .val();//选中的值
-    // 	var obj=document.getElementById("customize");
-    // 	var index=obj.selectedIndex;
-    // 	var value=obj.options[index].value;
-    // 	if(value.equal("是")) {
-    // 		document.getElementById("type").disabled=true;
-    // 	}
-    // });
-    // // $("#customize").onchange(function(){
-    // // 	//要触发的事件
-    // // 	// var str=$('#testSelect option:selected') .val();//选中的值
-    // // 	var obj=document.getElementById("customize");
-    // // 	var index=obj.selectedIndex;
-    // // 	var value=obj.options[index].value;
-    // // 	alert(value);
-    // // 	if(value.equal("是")) {
-    // // 		document.getElementById("type").disabled=true;
-    // // 	}
-    // // });
 
 </script>
 </html>

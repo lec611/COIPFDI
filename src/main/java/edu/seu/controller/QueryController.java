@@ -1,5 +1,6 @@
 package edu.seu.controller;
 
+import com.alibaba.fastjson.JSON;
 import edu.seu.base.CodeEnum;
 import edu.seu.base.CommonResponse;
 import edu.seu.exceptions.COIPFDIExceptions;
@@ -32,7 +33,7 @@ public class QueryController {
     public String queryAll (HttpServletRequest request, HttpServletResponse response) {
         try{
             //从request请求中取得查询关键字
-            String id_name_type = (String)request.getSession().getAttribute("id_name_type");
+            String id_name_type = request.getParameter("id_name_type");
             //查询数据结果
             List<QueryResult> queryResults = queryResultService.queryAll(id_name_type);
             //将list集合转换成json对象
@@ -44,7 +45,7 @@ public class QueryController {
             PrintWriter responseWritter = response.getWriter();
             //将JSON格式的对象toString后发送
             responseWritter.append(data.toString());
-            return new CommonResponse(CodeEnum.SUCCESS.getValue(),"查询成功").toJSONString();
+            return JSON.toJSONString(data.toString());
         } catch (COIPFDIExceptions e){
             LOGGER.info(e.getMessage());
             return new CommonResponse(e.getCodeEnum().getValue(),e.getMessage()).toJSONString();

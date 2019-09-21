@@ -43,7 +43,6 @@ public class CalculatorController {
                 for(int i=7;i<14;i++){
                     if(str[i] != "") {
                         array[i] = Double.parseDouble(str[i].substring(1, str[i].length() - 1));
-                        System.out.println(array[i]);
                     }else{
                         array[i] = 0;
                     }
@@ -62,10 +61,6 @@ public class CalculatorController {
                 weight[4]=temp.getPolicy();
                 weight[5]=temp.getCapital();
                 weight[6]=temp.getCulture();
-                //test
-                for(int i=0;i<7;i++){
-                    System.out.println(weight[i]);
-                }
                 goal = goal(Arrays.copyOfRange(array,0,7),weight);
             }
             response.addHeader("goal",String.valueOf(goal));
