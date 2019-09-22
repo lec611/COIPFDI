@@ -900,25 +900,13 @@
     // 搜索文件
     function doClickSimplySearch() {
         var key = $("#simSearchKey").val();
-        var isEdit = $("#isEdit").val();
-        var isActive = $("#isActive").val();
-        var curPage = $("#curPageIndex").data("curpage");
-        var affiliationId = $("#curPageIndex").data("affid");
         $.ajax({
             type: 'get',
-            url: '${ctx}/document/simpleSearch',
-            data: {"name": key, "page": curPage, "isEdit": isEdit, "isActive": isActive},
+            url: '${ctx}/query',
+            data: {"id_name_type": key},
             dataType: "json",
             success: function (data) {
-                if (data.code != 200) {
-                    layer.msg(data.msg, {icon: 2});
-                    return false;
-                } else {
-                    fillDocsTable(data, affiliationId, curPage, isEdit, isActive);
-                    $("#simSearchKey").val("");
-                    clearVerticalMenuCSS();
-                    return '';
-                }
+                alert(data);
             }
         });
     }
@@ -1404,6 +1392,13 @@
         }
     }
 
+    <%--function createNode(txt) {--%>
+    <%--    const template = `<div class='child'>${txt}</div>`;--%>
+    <%--    let tempNode = document.createElement('div');--%>
+    <%--    tempNode.innerHTML = template;--%>
+    <%--    return tempNode.firstChild;--%>
+    <%--}--%>
+
     function calculation() {
         debugger;
         var array = new Array(15);
@@ -1427,41 +1422,29 @@
             dataType: 'json',
             success: function (result) {
                 var data = eval('('+result+')')['goal'];
+                var str;
                 if(data<20){
-                    document.getElementById("chartContainer").innerText=data.toString()+"\n融合化发展水平很低";
-                    document.getElementById("chartContainer").style.fontSize='30px';
-                    document.getElementById("chartContainer").style.textAlign='center'
+                    str="很低";
                 }
                 else if(data>=20&&data<40){
-                    document.getElementById("chartContainer").innerText=data.toString()+"\n融合化发展水平较低";
-                    document.getElementById("chartContainer").style.fontSize='30px';
-                    document.getElementById("chartContainer").style.textAlign='center';
+                    str="较低";
                 }
                 else if(data>=40&&data<60){
-                    document.getElementById("chartContainer").innerText=data.toString()+"\n融合化发展水平一般";
-                    document.getElementById("chartContainer").style.fontSize='30px';
-                    document.getElementById("chartContainer").style.textAlign='center';
+                    str="一般";
                 }
                 else if(data>=60&&data<80){
-                    document.getElementById("chartContainer").innerText=data.toString()+"\n融合化发展水平较高";
-                    document.getElementById("chartContainer").style.fontSize='30px';
-                    document.getElementById("chartContainer").style.textAlign='center';
+                    str="较高";
                 }
                 else if(data>=80){
-                    document.getElementById("chartContainer").innerText=data.toString()+"\n融合化发展水平很高";
-                    document.getElementById("chartContainer").style.fontSize='30px';
-                    document.getElementById("chartContainer").style.textAlign='center';
+                    str="很高";
                 }
+                const container = document.getElementById("chartContainer");
+                container.innerText = "融合化发展指数\n"+data+"\n融合化发展水平"+str;
+                container.style.fontSize = '30px';
+                container.style.textAlign = 'center';
+                container.style.verticalAlign = "middle";
                 debugger;
-                console.log(result.type);
-                alert(data);
-                <%--if (data.code != 200) {--%>
-                <%--    layer.msg(data.msg, {icon: 2});--%>
-                <%--    return false;--%>
-                <%--} else {--%>
-                <%--    layer.msg(data.msg, {icon: 1});--%>
-                <%--    location = "${ctx}/";--%>
-                <%--}--%>
+
             }
         });
     }

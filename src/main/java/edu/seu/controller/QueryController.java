@@ -7,6 +7,7 @@ import edu.seu.exceptions.COIPFDIExceptions;
 import edu.seu.model.QueryResult;
 import edu.seu.service.QueryResultService;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
 import java.util.List;
 
 @Controller
@@ -36,16 +36,17 @@ public class QueryController {
             String id_name_type = request.getParameter("id_name_type");
             //查询数据结果
             List<QueryResult> queryResults = queryResultService.queryAll(id_name_type);
-            //将list集合转换成json对象
-            JSONArray data = JSONArray.fromObject(queryResults);
-            //接下来发送数据
-            //设置编码，防止出现乱码问题
-            response.setCharacterEncoding("utf-8");
-            //得到输出流
-            PrintWriter responseWritter = response.getWriter();
-            //将JSON格式的对象toString后发送
-            responseWritter.append(data.toString());
-            return JSON.toJSONString(data.toString());
+            JSONArray array = new JSONArray();
+            for(int i = 0;i < queryResults.size();i++){
+                JSONObject object = new JSONObject();
+                object.put("id", queryResults.get(i).getId());
+                object.put("userID", queryResults.get(i).getUserID());
+                object.put("userName", queryResults.get(i).getUserName());
+                object.put("type", queryResults.get(i).getType());
+                object.put("goal", queryResults.get(i).getGoal());
+                array.add(object);
+            }
+            return JSON.toJSONString(array.toString());
         } catch (COIPFDIExceptions e){
             LOGGER.info(e.getMessage());
             return new CommonResponse(e.getCodeEnum().getValue(),e.getMessage()).toJSONString();
@@ -53,7 +54,5 @@ public class QueryController {
             LOGGER.error(e.getMessage());
             return new CommonResponse(CodeEnum.USER_ERROR.getValue(),e.getMessage()).toJSONString();
         }
-
     }
-
 }

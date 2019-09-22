@@ -17,17 +17,26 @@ public class QueryResultService {
 
     //根据用户的输入查询匹配结果
     public List<QueryResult> queryAll(String id_name_type) throws COIPFDIExceptions {
-        List<QueryResult> qr1 = queryResultDao.selectById(Integer.parseInt(id_name_type));
-        List<QueryResult> qr2 = queryResultDao.selectByName(id_name_type);
-        List<QueryResult> qr3 = queryResultDao.selectByType(id_name_type);
-        List<QueryResult> qr = (qr1 != null) ? qr1 :qr2;
-        qr = (qr != null) ? qr : qr3;
+        List<QueryResult> queryByName = queryResultDao.selectByName(id_name_type);
+        List<QueryResult> queryByType =  queryResultDao.selectByType(id_name_type);
+        List<QueryResult> result = (queryByName.isEmpty()) ? queryByType : queryByName;
 
-        if(qr == null){
+        //查询字符串若表示用户id
+        boolean flag = true;
+        for(int i=0;i<id_name_type.length();i++){
+            if(id_name_type.charAt(i)<'0' || id_name_type.charAt(i)>'9')
+                flag = false;
+        }
+        if(flag) {
+            List<QueryResult> queryById = queryResultDao.selectById(Integer.parseInt(id_name_type));
+            result = (result.isEmpty()) ? queryById : result;
+        }
+
+        if(result == null){
             throw new COIPFDIExceptions(CodeEnum.DOCUMENT_ERROR,"未找到相关结果");
         }
 
-        return qr;
+        return result;
     }
 
 

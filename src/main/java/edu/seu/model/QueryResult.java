@@ -21,6 +21,22 @@ public class QueryResult {
         this.id = id;
     }
 
+    public Integer getUserID() {
+        return userID;
+    }
+
+    public void setUserID(Integer userID) {
+        this.userID = userID;
+    }
+
+    public Boolean getPassed() {
+        return isPassed;
+    }
+
+    public void setPassed(Boolean passed) {
+        isPassed = passed;
+    }
+
     public String getUserName() {
         return userName;
     }
