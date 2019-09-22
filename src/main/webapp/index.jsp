@@ -33,6 +33,13 @@
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
 
+    <style type="text/css">
+        .layui-side .left-nav-index{
+            fixwidth: true;
+            width: 300px;
+        }
+    </style>
+
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -199,8 +206,8 @@
     </div>
 
 
-    <div class="layui-side left-nav-index">
-        <div class="layui-side-scroll">
+    <div class="layui-side left-nav-index" style="width:20%">
+        <div class="layui-side-scroll" style="width:100%">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） --><!-- 选择区部分 -->
             <table class="table table-hover table-bordered">
                 <tr>
@@ -249,7 +256,7 @@
                             </li>
                             <li class="layui-nav-item">自定义模式
                                 <select class="form-control" style="width:180px;" id="customize">
-                                    <option value="0" slected>否</option>
+                                    <option value="0" selected>否</option>
                                     <option value="1">是</option>
                                 </select>
                             </li>
@@ -257,21 +264,31 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>评价结果查询<br>篇名/关键词
-                        <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="formSearch"
-                                onclick="doClickSimplySearch();" id="simpleSearch" style="margin-left:40px;">搜索
-                        </button>
+                    <td>评价结果查询(篇名/关键词)
                         <input type="text" name="" class="layui-input doc-search" id="simSearchKey"
                                placeholder="请输入：关键字" style="width:180px;">
+                        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit="" lay-filter="formSearch" id="simpleSearch"
+                                onclick="doClickSimplySearch();"  style="margin-top:5px;width: 180px">搜索
+                        </button>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <div class="panel panel-default" style="width:190px;">
+                        <div class="panel panel-default" style="width:240px;">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
                                     查询结果列表
                                 </h3>
+                            </div>
+                            <div id="table_div" align="left">
+                                <table id="queryResultTable" width="98%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <th>&nbsp;<b>查询编号</b></th>
+                                        <th>&nbsp;<b>用户名</b></th>
+                                        <th>&nbsp;<b>园区类型</b></th>
+                                        <th>&nbsp;<b>       </b></th>
+                                    </tr>
+                                </table>
                             </div>
                             <div class="panel-body">
 
@@ -283,7 +300,7 @@
         </div>
     </div>
 
-    <div class="layui-body left-nav-body">
+    <div class="layui-body left-nav-body" style="left:273px">
         <!-- 内容主体区域 -->
 
         <!--左边文章列表-->
@@ -899,6 +916,12 @@
 
     // 搜索文件
     function doClickSimplySearch() {
+        var resultTable = document.getElementById('queryResultTable');
+        // 删除所有行，不删除标题行
+        var rowCount = resultTable.rows.length; // 获得一共多少行，因为不删除标题，所以索引从 1 开始
+        for (var i = 1; i < rowCount; i++) {
+            resultTable.deleteRow(1); // 因为删除一行以后下面的行会顶上来，所以一直删除第一行即可
+        }
         var key = $("#simSearchKey").val();
         $.ajax({
             type: 'get',
@@ -906,7 +929,21 @@
             data: {"id_name_type": key},
             dataType: "json",
             success: function (data) {
-                alert(data);
+                if(data != '[]'){
+                    var objs=eval(data); // 解析JSON
+                    var count=1;
+                    for(var i=0;i<objs.length;i++) { // 循环对象
+                        var queryObj = objs[i];
+                        var row = resultTable.insertRow(count++); // 插入一行rows是一个数组，索引从0开始
+                        row.insertCell(0).innerHTML = "&nbsp;" + queryObj.id; // insertCell插入列，从0开始
+                        row.insertCell(1).innerHTML = "&nbsp;" + queryObj.userName;
+                        row.insertCell(2).innerHTML = "&nbsp;" + queryObj.type;
+                        var buttonHTML="<button class=\"layui-btn layui-btn-normal layui-btn-xs\" onclick=\"showResultInChartContainer("+queryObj.goal+");\" style=\"margin-top: 3px\">结果预览 </button>";
+                        row.insertCell(3).innerHTML = "&nbsp;" + buttonHTML;
+                    }
+                }else{
+                    alert("未查询到结果！");
+                }
             }
         });
     }
@@ -1422,31 +1459,34 @@
             dataType: 'json',
             success: function (result) {
                 var data = eval('('+result+')')['goal'];
-                var str;
-                if(data<20){
-                    str="很低";
-                }
-                else if(data>=20&&data<40){
-                    str="较低";
-                }
-                else if(data>=40&&data<60){
-                    str="一般";
-                }
-                else if(data>=60&&data<80){
-                    str="较高";
-                }
-                else if(data>=80){
-                    str="很高";
-                }
-                const container = document.getElementById("chartContainer");
-                container.innerText = "融合化发展指数\n"+data+"\n融合化发展水平"+str;
-                container.style.fontSize = '30px';
-                container.style.textAlign = 'center';
-                container.style.verticalAlign = "middle";
-                debugger;
-
+                showResultInChartContainer(data);
             }
         });
+    }
+
+    function showResultInChartContainer(data) {
+        let str;
+        if(data<20){
+            str="很低";
+        }
+        else if(data>=20&&data<40){
+            str="较低";
+        }
+        else if(data>=40&&data<60){
+            str="一般";
+        }
+        else if(data>=60&&data<80){
+            str="较高";
+        }
+        else if(data>=80){
+            str="很高";
+        }
+        const container = document.getElementById("chartContainer");
+        container.innerText = "融合化发展指数\n"+data+"\n融合化发展水平"+str;
+        container.style.fontSize = '30px';
+        container.style.textAlign = 'center';
+        container.style.verticalAlign = "middle";
+
     }
 
 </script>
