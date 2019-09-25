@@ -33,13 +33,6 @@
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
 
-    <style type="text/css">
-        .layui-side .left-nav-index{
-            fixwidth: true;
-            width: 300px;
-        }
-    </style>
-
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -216,7 +209,7 @@
                             <li class="layui-nav-item">园区个数
                                 <DIV style="POSITION: relative">
                                     <SELECT name="districtSelect" class="form-control"
-                                            style=" WIDTH: 120px; CLIP: rect(0px auto auto 80px); POSITION: relative"
+                                            style=" WIDTH: 120px; CLIP: rect(0px auto auto 80px); POSITION: relative" id="numCount"
                                             onchange="document.getElementById('districtNum').value=this.options[this.selectedIndex].value">
                                         <%
                                             for (int i = 1; i <= 1000; i++) {
@@ -231,7 +224,7 @@
                             <li class="layui-nav-item">时间序列
                                 <DIV style="POSITION: relative">
                                     <SELECT name="districtSelect" class="form-control"
-                                            style=" WIDTH: 120px; CLIP: rect(0px auto auto 80px); POSITION: relative"
+                                            style=" WIDTH: 120px; CLIP: rect(0px auto auto 80px); POSITION: relative" id="timeSequence"
                                             onchange="document.getElementById('districtTime').value=this.options[this.selectedIndex].value">
                                         <%
                                             for (int i = 1; i <= 1000; i++) {
@@ -240,6 +233,21 @@
                                         %>
                                     </SELECT>
                                     <INPUT id="districtTime" name="districtTime" class="form-control"
+                                           style="LEFT: 2px; TOP: 2px; WIDTH: 92px;height:28px; POSITION: absolute;border:0">
+                                </DIV>
+                            </li>
+                            <li class="layui-nav-item">园区类型数
+                                <DIV style="POSITION: relative">
+                                    <SELECT name="typeCount" class="form-control"
+                                            style=" WIDTH: 120px; CLIP: rect(0px auto auto 80px); POSITION: relative" id="typeCountSel"
+                                            onchange="document.getElementById('typeCount').value=this.options[this.selectedIndex].value">
+                                        <%
+                                            for (int i = 1; i <= 1000; i++) {
+                                                out.print("<OPTION value='" + i + "'>" + i + "</OPTION>");
+                                            }
+                                        %>
+                                    </SELECT>
+                                    <INPUT id="typeCount" name="districtTime" class="form-control"
                                            style="LEFT: 2px; TOP: 2px; WIDTH: 92px;height:28px; POSITION: absolute;border:0">
                                 </DIV>
                             </li>
@@ -302,8 +310,6 @@
 
     <div class="layui-body left-nav-body" style="left:273px">
         <!-- 内容主体区域 -->
-
-        <!--左边文章列表-->
         <div class="blog-main">
             <!--左边栏目--><!-- 数据输入部分 -->
             <div class="blog-main-left" id="blog-main-left">
@@ -316,7 +322,7 @@
                             <td>
                                 <div class="form-group">
                                     文件输入
-                                    <button type="button" class="btn btn-default" style="margin-left: 0px">确定</button>
+                                    <button type="button" class="btn btn-default" style="margin-left: 0px" onclick="fileCalculate()">确定</button>
                                     <br><input type="file" id="inputFile" class="form-control">
 
                                 </div>
@@ -396,7 +402,12 @@
                         </tr>
                         <tr>
                             <td>文件输出
-                                <button type="button" class="btn btn-default">浏览</button>
+                                <button type="button" class="btn btn-default" id="btnFileOutput" onclick="filePDFOutput();">浏览</button>
+<%--                                <h2 class="layui-colla-title layui-btn-sm" style="background-color: #009688">浏览</h2>--%>
+<%--                                <div class="layui-colla-content">--%>
+<%--                                    <span class="layui-btn" data-status='1' onclick="filePDFOutput();">导出PDF</span>--%>
+<%--                                    <span class="layui-btn" data-status='0' onclick="fileExcelOutput();">导出Excel</span>--%>
+<%--                                </div>--%>
                             </td>
                         </tr>
                         <tr>
@@ -437,6 +448,8 @@
 <script src='static/js/pdfobject.js'></script>
 <script src="static/plug/qrcodejs/qrcode.js"></script>
 <script src="static/js/canvasjs.min.js"></script>
+<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+<script src="https://cdn.bootcss.com/jspdf/1.3.4/jspdf.debug.js"></script>
 <!-- ECharts单文件引入 -->
 <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
 <script>
@@ -948,6 +961,52 @@
         });
     }
 
+    // 导出PDF文件
+    function filePDFOutput(){
+        var target = document.getElementsByClassName("blog-main");
+        html2canvas(target).then(function (canvas)
+            {
+                var contentWidth = canvas.width;
+                var contentHeight = canvas.height;
+
+                //一页pdf显示html页面生成的canvas高度;
+                var pageHeight = contentWidth / 592.28 * 841.89;
+                //未生成pdf的html页面高度
+                var leftHeight = contentHeight;
+                //pdf页面偏移
+                var position = 0;
+                //html页面生成的canvas在pdf中图片的宽高（a4纸的尺寸[595.28,841.89]）
+                var imgWidth = 595.28;
+                var imgHeight = 592.28 / contentWidth * contentHeight;
+
+                var pageData = canvas.toDataURL('image/jpeg', 1.0);
+                var pdf = new jsPDF('', 'pt', 'a4');
+
+                //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+                //当内容未超过pdf一页显示的范围，无需分页
+                if (leftHeight < pageHeight) {
+                    pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
+                } else {
+                    while (leftHeight > 0) {
+                        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+                        leftHeight -= pageHeight;
+                        position -= 841.89;
+                        //避免添加空白页
+                        if (leftHeight > 0) {
+                            pdf.addPage();
+                        }
+                    }
+                }
+                pdf.save('中国境外产业园区融合发展指数测度.pdf');
+            }
+        );
+    }
+
+    // 导出Excel文件
+    function fileExcelOutput(){
+
+    }
+
     function editeDoc(docId) {
         location.href = '${ctx}/docOperation';
         window.localStorage.setItem('docId', docId);
@@ -1282,7 +1341,7 @@
         var data = {
             'type': 0,
             'time': [2017, 2018, 2019],
-            'country': "阿富汗",
+            'country': "园区融合发展指数",
             'data': [[1.1, 1.3, 1.5, 1.2], [1.7, 2.3, 1.1, 2.3], [1.2, 1.0, 1.8, 1.7]]
         };
         var type = data['type'];
@@ -1297,16 +1356,16 @@
                     legendText: "" + data['time'][i],
                     showInLegend: true,
                     dataPoints: [
-                        {label: "政治风险", y: data['data'][i][0]},
-                        {label: "经济风险", y: data['data'][i][1]},
-                        {label: "社会风险", y: data['data'][i][2]},
-                        {label: "综合风险", y: data['data'][i][3]},
+                        {label: "园区一", y: data['data'][i][0]},
+                        {label: "园区二", y: data['data'][i][1]},
+                        {label: "园区三", y: data['data'][i][2]},
+                        {label: "园区四", y: data['data'][i][3]},
                     ]
                 };
                 charData.push(column);
             }
         } else if (type == 1) {
-            title_text = "各国家" + data['time'] + "年风险对比";
+            title_text = "各园区" + data['time'] + "年指数对比";
             for (var i = 0; i < data['data'].length; i++) {
                 var column = {
                     type: "column",
@@ -1355,12 +1414,12 @@
         var data = {
             'type': 0,
             'time': [2017, 2018, 2019],
-            'country': "阿富汗",
+            'country': "园区融合发展指数",
             'data': [[1.1, 1.3, 1.5, 1.2], [1.7, 2.3, 1.1, 2.3], [1.2, 1.0, 1.8, 1.7]]
         };
         var type = data['type'];
         charData = [];
-        risk = ["政治风险", "经济风险", "社会风险", "综合风险"];
+        risk = ["园区一", "园区二", "园区三", "园区四"];
         var title_text;
         if (type == 0) {
             title_text = data['country'];
@@ -1454,7 +1513,7 @@
         var customize = customizeObj.options[customizeindex].text;
         $.ajax({
             type: 'post',
-            url: '${ctx}/calculate',
+            url: '${ctx}/calculate/table',
             data:{"array": JSON.stringify(array), "type": type, "customize": customize},
             dataType: 'json',
             success: function (result) {
@@ -1462,6 +1521,48 @@
                 showResultInChartContainer(data);
             }
         });
+    }
+
+    function fileCalculate() {
+        //园区个数
+        var Obj1 = document.getElementById("numCount");
+        var index1 = Obj1.selectedIndex;
+        var text1 = Obj1.options[index1].text;
+        //时间序列
+        var Obj2 = document.getElementById("timeSequence");
+        var index2 = Obj2.selectedIndex;
+        var text2 = Obj2.options[index2].text;
+        //园区类型数
+        var Obj3 = document.getElementById("typeCountSel");
+        var index3 = Obj3.selectedIndex;
+        var text3 = Obj3.options[index3].text;
+        //园区类型
+        var Obj4 = document.getElementById("type");
+        var index4 = Obj4.selectedIndex;
+        var text4 = Obj4.options[index4].text;
+
+        var formData = new FormData();
+        formData.append('file', $('#inputFile')[0].files[0]); // 固定格式
+        formData.append('numCount', text1);
+        formData.append('timeCount', text1);
+        formData.append('typeCount', text1);
+        formData.append('type', text1);
+
+        $.ajax({
+            url:'${ctx}/calculate/file',	//后台接收数据地址
+            data:formData,
+            type: "POST",
+            dataType: "json",
+            cache: false,			//上传文件无需缓存
+            processData: false,		//用于对data参数进行序列化处理 这里必须false
+            contentType: false,
+            success:function(){
+                alert("文件上传成功！");
+            },
+            failure: function () {
+                alert("文件上传失败！");
+            }
+        })
     }
 
     function showResultInChartContainer(data) {

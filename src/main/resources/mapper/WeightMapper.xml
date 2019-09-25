@@ -4,9 +4,37 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="edu.seu.dao.WeightDao">
-    <update id="update" parameterType="edu.seu.model.Weight">
+    <update id="updateWeight" parameterType="edu.seu.model.Weight">
         update weight set
-        <trim suffixOverrides="," suffix="where id = #{id}">
+        <trim suffixOverrides=",">
+            <if test="industry!=null">
+                industry = #{industry},
+            </if>
+            <if test="market!=null">
+                market = #{market},
+            </if>
+            <if test="technology!=null">
+                technology = #{technology},
+            </if>
+            <if test="hr!=null">
+                hr = #{hr},
+            </if>
+            <if test="policy!=null">
+                policy = #{policy},
+            </if>
+            <if test="capital!=null">
+                capital = #{capital},
+            </if>
+            <if test="culture!=null">
+                culture = #{culture},
+            </if>
+        </trim>
+        <where>type = #{type}</where>
+    </update>
+
+    <update id="updateStandard" parameterType="edu.seu.model.Weight">
+        update standard set
+        <trim suffixOverrides=",">
             <if test="industry!=null">
                 industry = #{industry},
             </if>
