@@ -308,7 +308,7 @@
         </div>
     </div>
 
-    <div class="layui-body left-nav-body" style="left:273px">
+    <div class="layui-body left-nav-body" style="left:20%">
         <!-- 内容主体区域 -->
         <div class="blog-main">
             <!--左边栏目--><!-- 数据输入部分 -->
