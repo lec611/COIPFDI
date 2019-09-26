@@ -1,6 +1,8 @@
 package edu.seu.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import edu.seu.base.CodeEnum;
 import edu.seu.base.CommonResponse;
 import edu.seu.model.Weight;
@@ -24,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -86,96 +89,56 @@ public class CalculatorController {
 
     @ResponseBody
     @RequestMapping("/file")
-    public void calculateFile(HttpServletRequest request, HttpServletResponse response,
+    public String calculateFile(HttpServletRequest request, HttpServletResponse response,
                               @RequestParam(value="file") MultipartFile file, @RequestParam(value="numCount") String numCount,
                               @RequestParam(value="timeCount") String timeCount,@RequestParam(value="typeCount") String typeCount,@RequestParam(value="type") String type) throws IOException {
-        int year = Integer.parseInt(timeCount);
-        int num = Integer.parseInt(numCount);
-        int typeNum = Integer.parseInt(typeCount);
-        if(typeNum > 1) {
-            //String type = request.getParameter("type");
-        }
-        //获取Excel文件输入
-//        FileItemFactory factory = new DiskFileItemFactory();
-//        ServletFileUpload upload = new ServletFileUpload(factory);
+        int num = Integer.parseInt(numCount);         //几个园区
+        int year = Integer.parseInt(timeCount);       //共几年
+        int typeNum = Integer.parseInt(typeCount);    //园区类型数
 
-//        DtdCheckEntBasicInfo entity = new DtdCheckEntBasicInfo();
-//        List<DtdCheckEntBasicInfo> listInfo = new ArrayList<>();
-//        DtdCheckEntBasicInfoDetail bean = new DtdCheckEntBasicInfoDetail();
-//        List<DtdCheckEntBasicInfoDetail> listBean = new ArrayList<>();
         /**
          * 读取上传文件
          */
-        try {
-            ImportExcel poi = new ImportExcel();
-            InputStream inputStream = file.getInputStream();
-            List<List<String>> list = poi.read(inputStream, file.getOriginalFilename().matches("(?i)(xls)$"));
-            /**
-             * POI遍历Excel文件，然后读取文件封装成List数据
-             */
+        ImportExcel importExcel = new ImportExcel();
+        List<Weight> dataList = importExcel.read(file.getOriginalFilename(),file);
 
-
-            if (list != null) {
-                for (int i = 1; i < list.size(); i++) {
-                    List<String> cellList = list.get(i);
-//                    String ID = dtdUtil.getUUID().toUpperCase();
-//                    entity.setId(ID);
-//                    entity.setEntid(ID);
-//                    entity.setEntname(cellList.get(0));
-//                    entity.setAreaid(cellList.get(1));
-//                    entity.setAreaname(cellList.get(2));
-//                    entity.setRegisteraddress(cellList.get(3));
-//                    entity.setAddress(cellList.get(4));
-//                    entity.setSocietycreditcode(cellList.get(5));
-//                    entity.setLerepname(cellList.get(6));
-//                    entity.setLerepmobile(cellList.get(7));
-//                    entity.setLereptelephonenum(cellList.get(8));
-//                    entity.setIssueDate(cellList.get(9));
-//                    entity.setValidDate(cellList.get(10));
-//                    entity.setDataStatus("10");
-//                    entity.setCreateTime(new Date());
-//                    listInfo.add(entity);//处理生成List数组
-//                    System.out.println();
-//                    bean.setId(ID);
-//                    bean.setEntid(ID);
-//                    bean.setEntname(cellList.get(0));
-//                    bean.setRecordInfo(cellList.get(11));
-//                    bean.setFund(cellList.get(12));
-//                    bean.setAssets(cellList.get(13));
-//                    bean.setQualification(cellList.get(14));
-//                    bean.setRegulators(cellList.get(15));
-//                    bean.setBusinessScope(cellList.get(16));
-//                    bean.setRegisteredCapital(cellList.get(17));
-//                    bean.setBusinessStartDate(cellList.get(9));
-//                    bean.setBusinessEndDate(cellList.get(10));
-//                    bean.setRegistrationAuthority(cellList.get(18));
-//                    bean.setApprovalDate(cellList.get(19));
-//                    if("已登记".equals(cellList.get(20))){
-//                        bean.setRegistrationStatus("1");
-//                    }else{
-//                        bean.setRegistrationStatus("0");
-//                    }
-//                    listBean.add(bean);
-//                }
-//                //遍历Excel文件，然后读取文件封装成List数据,然后插入到数据中
-//                dao.batchInsert(listInfo);
-//                dao_detail.batchInsert(listBean);
-                }
-            }else{
-                throw new RuntimeException("请填写Excel内容");
-            }
-//            List items = upload.parseRequest(request);
-//            Iterator iter = items.iterator();
-//            while (iter.hasNext()) {
-//                FileItem item = (FileItem) iter.next();
-//                if (!item.isFormField()) {
-//                    inputStream = item.getInputStream();
-//                }
-//            }
-        } catch (/*FileUploadException | */IOException e) {
-            e.printStackTrace();
+        //错误判断
+        if(dataList == null){
+            return new CommonResponse(CodeEnum.USER_ERROR.getValue(),"您输入的文件为空！").toJSONString();
         }
-
+        if((typeNum == 1) && (dataList.size() < year*num)){
+            return new CommonResponse(CodeEnum.USER_ERROR.getValue(),"文件中的数据条目不达标！请重新输入！").toJSONString();
+        }
+        if((typeNum > 1) && (dataList.size() != (year+2)*num)){
+            return new CommonResponse(CodeEnum.USER_ERROR.getValue(),"文件中的数据条目不达标！请重新输入！").toJSONString();
+        }
+        double goal;
+        JSONArray array = new JSONArray();
+        //如果为单个园区类型并省略权重信息时，则去数据库取出相应权重计算
+        if((typeNum == 1) && (dataList.size() == year*num)){
+            Weight weight = weightService.queryWeightByType(type);
+            for(int i=0;i<dataList.size();i++) {
+                goal = goal(dataList.get(i), weight);
+                JSONObject object = new JSONObject();
+                object.put("zoneNum","园区"+(i/year+1));
+                object.put("yearNum","第"+(i%year+1)+"年");
+                object.put("goal", new DecimalFormat("#.0000").format(goal));
+                array.add(object);
+            }
+            return JSON.toJSONString(array.toString());
+        }
+        //多园区类型(后面2*num个数据表示权重和标准)或单个园区类型且并未省略权重信息
+        else{
+            for(int i=0;i<dataList.size()-2*num;i++){
+                goal = goal(dataList.get(i),dataList.get(year*num+i/year));
+                JSONObject object = new JSONObject();
+                object.put("zoneNum","园区"+(i/year+1));
+                object.put("yearNum","第"+(i%year+1)+"年");
+                object.put("goal", new DecimalFormat("#.0000").format(goal));
+                array.add(object);
+            }
+            return JSON.toJSONString(array.toString());
+        }
     }
 
     //按公式进行通用计算并返回得分
@@ -186,5 +149,20 @@ public class CalculatorController {
         }
         return sum;
     }
+    //对于传入的是两个weight类型的数据结构(由于数值类型和权重类型的数据结构相差不大，因此混用)
+    public double goal(Weight data,Weight weight){
+        return data.getIndustry()*weight.getIndustry()
+                +data.getMarket()*weight.getMarket()
+                +data.getTechnology()*weight.getTechnology()
+                +data.getHr()*weight.getHr()
+                +data.getPolicy()*weight.getPolicy()
+                +data.getCapital()*weight.getCapital()
+                +data.getCulture()*weight.getCulture();
+    }
+
+    //Json数据格式生成
+//    public String toJsonString(int zoneNum,int yearNum,double goal){
+//        return String.format("{'zoneNum':\"园区\"+%d, 'yearNum':\"第\"+%d+\"年\", 'goal':%.4f}",zoneNum,yearNum,goal);
+//    }
 
 }

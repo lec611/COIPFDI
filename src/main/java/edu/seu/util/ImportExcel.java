@@ -5,7 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import edu.seu.model.Weight;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -13,6 +16,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
  * excel读取 工具类
@@ -21,25 +26,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *      该类使用到了以下jar：
  *      1、poi-ooxml-3.9.jar
  *      2、poi-3.9.jar
+ *      3、poi-ooxml-schemas-3.9.jar
  */
 public class ImportExcel {
-
-    /**
-     * main测试
-     */
-//    public static void main(String[] args) throws Exception {
-//        ImportExcel poi = new ImportExcel();
-//        List<List<String>> list = poi.read("C:\\Users\\Administrator\\Desktop\\总结\\lalala.xls");
-//        if (list != null) {
-//            for (int i = 0; i < list.size(); i++) {
-//                List<String> cellList = list.get(i);
-//                for (int j = 0; j < cellList.size(); j++) {
-//                    System.out.print(String.format("%20s",cellList.get(j)));
-//                }
-//                System.out.println();
-//            }
-//        }
-//    }
 
     //总行数
     private int totalRows = 0;
@@ -87,7 +76,11 @@ public class ImportExcel {
 
         /** 检查文件是否存在 */
         File file = new File(filePath);
-        if (file == null || !file.exists()) {
+        if (file == null) {
+            errorInfo = "文件为空";
+            return false;
+        }
+        else if(!file.exists()) {
             errorInfo = "文件不存在";
             return false;
         }
@@ -97,26 +90,43 @@ public class ImportExcel {
     /**
      * 根据文件路径读取excel文件
      */
-    public List<List<String>> read(String filePath) throws IOException {
-        List<List<String>> dataLst = new ArrayList<List<String>>();
+    public List<Weight> read(String fileName, MultipartFile Mfile) {
+
+        //把spring文件上传的MultipartFile转换成CommonsMultipartFile类型
+        CommonsMultipartFile cf = (CommonsMultipartFile) Mfile; //获取本地存储路径
+        File file = new File("D:\\fileupload");
+        //创建一个目录 （它的路径名由当前 File对象指定，包括任一必须的父路径。）
+        if (!file.exists()) file.mkdirs();
+        //新建一个文件
+        File file1 = new File("D:\\fileupload\\" + new Date().getTime() + ".xlsx");
+        //将上传的文件写入新建的文件中
+        try {
+            cf.getFileItem().write(file1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //初始化客户信息的集合
+        List<Weight> dataList = new ArrayList<>();
+        //初始化输入流
         InputStream is = null;
         try {
             /** 验证文件是否合法 */
-            if (!validateExcel(filePath)) {
+            if (!validateExcel(file1.getPath())) {
                 System.out.println(errorInfo);
                 return null;
             }
 
             /** 判断文件的类型，是2003还是2007 */
             boolean isExcel2003 = true;
-            if (CheckExcelUtil.isExcel2007(filePath)) {
+            if (CheckExcelUtil.isExcel2007(file1.getName())) {
                 isExcel2003 = false;
             }
 
             /** 调用本类提供的根据流读取的方法 */
-            File file = new File(filePath);
-            is = new FileInputStream(file);
-            dataLst = read(is, isExcel2003);
+            is = new FileInputStream(file1);
+            //根据excel里面的内容读取客户信息
+            dataList = read(is, isExcel2003);
             is.close();
             is = null;
         } catch (Exception ex) {
@@ -131,7 +141,7 @@ public class ImportExcel {
                 }
             }
         }
-        return dataLst;
+        return dataList;
     }
 
     /**
@@ -147,8 +157,8 @@ public class ImportExcel {
      *          然后，可以通过 CheckExcelUtil 类的方法，接收文件名称参数，来判断excel所属的版本。最后再调用此方法来读取excel数据。
      *
      */
-    public List<List<String>> read(InputStream inputStream, boolean isExcel2003) {
-        List<List<String>> dataLst = null;
+    public List<Weight> read(InputStream inputStream, boolean isExcel2003) {
+        List<Weight> dataList = new ArrayList<>();
         try {
             /** 根据版本选择创建Workbook的方式 */
             Workbook wb = null;
@@ -157,18 +167,19 @@ public class ImportExcel {
             } else {
                 wb = new XSSFWorkbook(inputStream);
             }
-            dataLst = read(wb);
+            dataList = read(wb);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return dataLst;
+        return dataList;
     }
 
     /**
      * 读取数据
      */
-    private List<List<String>> read(Workbook wb) {
-        List<List<String>> dataLst = new ArrayList<>();
+    private List<Weight> read(Workbook wb) {
+        List<Weight> dataList = new ArrayList<>();
+        Weight weight;
         //得到第一个shell
         Sheet sheet = wb.getSheetAt(0);
         //得到Excel的行数
@@ -178,57 +189,37 @@ public class ImportExcel {
             this.totalCells = sheet.getRow(0).getPhysicalNumberOfCells();
         }
 
-        //循环Excel的行
-        for (int r = 0; r < this.totalRows; r++) {
-            Row row = sheet.getRow(r);
-            if (row == null) {
-                continue;
-            }
-            List<String> rowLst = new ArrayList<String>();
-            //循环Excel的列
-            for (int c = 0; c < this.getTotalCells(); c++) {
+        //循环Excel的列
+        for (int c = 0; c < this.getTotalCells(); c++) {
+            weight = new Weight();
+            //循环Excel的行
+            for (int r = 0; r < this.getTotalRows();r++) {
+                Row row = sheet.getRow(r);
+                if(row == null) continue;
+
                 Cell cell = row.getCell(c);
-                String cellValue = "";
                 if (null != cell) {
-                    cell.setCellType(HSSFCell.CELL_TYPE_STRING); //把所有的Excel内容当做字符串处理
-                    // 以下是判断数据的类型
-                    switch (cell.getCellType()) {
-                        case HSSFCell.CELL_TYPE_NUMERIC: // 数字
-                            cellValue = cell.getNumericCellValue() + "";
-                            break;
-
-                        case HSSFCell.CELL_TYPE_STRING: // 字符串
-                            cellValue = cell.getStringCellValue();
-                            break;
-
-                        case HSSFCell.CELL_TYPE_BOOLEAN: // Boolean
-                            cellValue = cell.getBooleanCellValue() + "";
-                            break;
-
-                        case HSSFCell.CELL_TYPE_FORMULA: // 公式
-                            cellValue = cell.getCellFormula() + "";
-                            break;
-
-                        case HSSFCell.CELL_TYPE_BLANK: // 空值
-                            cellValue = "";
-                            break;
-
-                        case HSSFCell.CELL_TYPE_ERROR: // 故障
-                            cellValue = "非法字符";
-                            break;
-
-                        default:
-                            cellValue = "未知类型";
-                            break;
+                    if (r == 0) {
+                        weight.setIndustry(cell.getNumericCellValue());
+                    } else if (r == 1) {
+                        weight.setMarket(cell.getNumericCellValue());
+                    } else if (r == 2) {
+                        weight.setTechnology(cell.getNumericCellValue());
+                    } else if (r == 3) {
+                        weight.setHr(cell.getNumericCellValue());
+                    } else if (r == 4) {
+                        weight.setPolicy(cell.getNumericCellValue());
+                    } else if (r == 5) {
+                        weight.setCapital(cell.getNumericCellValue());
+                    } else if (r == 6) {
+                        weight.setCulture(cell.getNumericCellValue());
                     }
                 }
-                rowLst.add(cellValue);
             }
-
-            //保存第r行的第c列
-            dataLst.add(rowLst);
+            //添加数据
+            dataList.add(weight);
         }
-        return dataLst;
+        return dataList;
     }
 
 }

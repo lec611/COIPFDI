@@ -1544,9 +1544,9 @@
         var formData = new FormData();
         formData.append('file', $('#inputFile')[0].files[0]); // 固定格式
         formData.append('numCount', text1);
-        formData.append('timeCount', text1);
-        formData.append('typeCount', text1);
-        formData.append('type', text1);
+        formData.append('timeCount', text2);
+        formData.append('typeCount', text3);
+        formData.append('type', text4);
 
         $.ajax({
             url:'${ctx}/calculate/file',	//后台接收数据地址
@@ -1556,8 +1556,9 @@
             cache: false,			//上传文件无需缓存
             processData: false,		//用于对data参数进行序列化处理 这里必须false
             contentType: false,
-            success:function(){
+            success:function(data){
                 alert("文件上传成功！");
+                alert(data);
             },
             failure: function () {
                 alert("文件上传失败！");
