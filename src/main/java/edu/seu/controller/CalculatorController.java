@@ -8,11 +8,6 @@ import edu.seu.base.CommonResponse;
 import edu.seu.model.Weight;
 import edu.seu.service.WeightService;
 import edu.seu.util.ImportExcel;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +86,7 @@ public class CalculatorController {
     @RequestMapping("/file")
     public String calculateFile(HttpServletRequest request, HttpServletResponse response,
                               @RequestParam(value="file") MultipartFile file, @RequestParam(value="numCount") String numCount,
-                              @RequestParam(value="timeCount") String timeCount,@RequestParam(value="typeCount") String typeCount,@RequestParam(value="type") String type) throws IOException {
+                              @RequestParam(value="timeCount") String timeCount,@RequestParam(value="typeCount") String typeCount,@RequestParam(value="type") String type) {
         int num = Integer.parseInt(numCount);         //几个园区
         int year = Integer.parseInt(timeCount);       //共几年
         int typeNum = Integer.parseInt(typeCount);    //园区类型数

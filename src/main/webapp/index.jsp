@@ -428,7 +428,7 @@
         <div class="clear"></div>
     </div>
 
-    <div class="layui-footer">
+    <div class="layui-footer" style="left:20%">
         <!-- 底部固定区域 -->
         <button class="layui-btn layui-btn-primary layui-btn-sm" id="back" style="display: none;">
             <i class="fa fa-chevron-left" aria-hidden="true"></i>
