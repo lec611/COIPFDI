@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 
 @RequestMapping("/reglogin")
@@ -51,7 +52,7 @@ public class LoginController {
             String oldEmailCaptcha = (String)request.getSession().getAttribute("emailCaptcha");
             String oldEmail = (String)request.getSession().getAttribute("email");
             String ticket = userService.register(user, oldEmail, codeCaptcha, emailCaptcha, oldCodeCaptcha, oldEmailCaptcha);
-            addCookie(ticket, response);
+            addCookie(user.getName().trim(),ticket, response);
             return new CommonResponse(CodeEnum.SUCCESS.getValue(), "注册成功").toJSONString();
         } catch (COIPFDIExceptions e) {
             LOGGER.info(e.getMessage() + " parameter:user={}, oldEmail={}, codeCaptcha={}, emailCaptcha={}, oldCodeCaptcha={}, oldEmailCaptcha={}", user,
@@ -75,7 +76,13 @@ public class LoginController {
             nameEmail = nameEmail.trim();
             String oldCodeCaptcha = (String) request.getSession().getAttribute("codeCaptcha");
             String ticket = userService.login(nameEmail, password, codeCaptcha, oldCodeCaptcha);
-            addCookie(ticket, response);
+            System.out.println("ticket"+ticket);
+            System.out.println(nameEmail+"/"+password);
+            addCookie(nameEmail,ticket, response);
+            HttpSession session=request.getSession(true);
+            session.setMaxInactiveInterval(30);
+            request.getSession().setAttribute("ticket",ticket);
+            request.getSession().setAttribute("name",nameEmail);
             return new CommonResponse(CodeEnum.SUCCESS.getValue(), "登录成功").toJSONString();
         } catch (COIPFDIExceptions e) {
             LOGGER.info(e.getMessage() + " parameter:nameEmail={}, password={}, codeCaptcha={}, oldCodeCaptcha={}",
@@ -86,20 +93,23 @@ public class LoginController {
                     nameEmail, password, codeCaptcha, request.getSession().getAttribute("codeCaptcha"), e);
             return new CommonResponse(CodeEnum.UNKNOWN_ERROR.getValue(), e.getMessage()).toJSONString();
         }
-
     }
 
-    private void addCookie(String ticket, HttpServletResponse response) {
+    private void addCookie(String nameEmail,String ticket, HttpServletResponse response) {
         Cookie cookie = new Cookie("ticket", ticket);
+        Cookie cookiename = new Cookie("name", nameEmail);
         cookie.setPath("/");
         response.addCookie(cookie);
+        response.addCookie(cookiename);
     }
 
     @ResponseBody
     @RequestMapping("/logout")
-    public String logout(@CookieValue("ticket") String ticket) {
+    public String logout(@CookieValue("ticket") String ticket,HttpServletRequest request) {
         try {
             userService.logout(ticket);
+            request.getSession().removeAttribute("name");
+            request.getSession().removeAttribute("ticket");
             return new CommonResponse(CodeEnum.SUCCESS.getValue(), "退出成功").toJSONString();
         } catch (Exception e) {
             LOGGER.error("/reglogin/logout parameter:ticket={}", ticket, e);

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import javax.servlet.http.HttpSession;
+import javax.xml.ws.spi.http.HttpContext;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +43,7 @@ public class CalculatorController {
     public String calculateTable(HttpServletRequest request, HttpServletResponse response){
         try{
             String customize = request.getParameter("customize");
+
             String arr = request.getParameter("array");
             double goal;
             String[] str = arr.substring(1,arr.length()-1).split(",");
@@ -85,11 +88,12 @@ public class CalculatorController {
     @ResponseBody
     @RequestMapping("/file")
     public String calculateFile(HttpServletRequest request, HttpServletResponse response,
-                              @RequestParam(value="file") MultipartFile file, @RequestParam(value="numCount") String numCount,
+                              @RequestParam(value="file") MultipartFile file, @RequestParam(value="numCount") String numCount,@RequestParam(value="chartType") String chartType,
                               @RequestParam(value="timeCount") String timeCount,@RequestParam(value="typeCount") String typeCount,@RequestParam(value="type") String type) {
         int num = Integer.parseInt(numCount);         //几个园区
         int year = Integer.parseInt(timeCount);       //共几年
         int typeNum = Integer.parseInt(typeCount);    //园区类型数
+        int charttype=Integer.parseInt(chartType);    //图类型
 
         /**
          * 读取上传文件
@@ -115,8 +119,10 @@ public class CalculatorController {
             for(int i=0;i<dataList.size();i++) {
                 goal = goal(dataList.get(i), weight);
                 JSONObject object = new JSONObject();
+                object.put("year",year);//增加年数，便于作柱状图
+                object.put("chartType",charttype);//增加图类型，便于作图
                 object.put("zoneNum","园区"+(i/year+1));
-                object.put("yearNum","第"+(i%year+1)+"年");
+                object.put("yearNum",(i%year+1));
                 object.put("goal", new DecimalFormat("#.0000").format(goal));
                 array.add(object);
             }
@@ -127,8 +133,10 @@ public class CalculatorController {
             for(int i=0;i<dataList.size()-2*num;i++){
                 goal = goal(dataList.get(i),dataList.get(year*num+i/year));
                 JSONObject object = new JSONObject();
+                object.put("year",year);//增加年数，便于作柱状图
+                object.put("chartType",charttype);//增加图类型，便于作图
                 object.put("zoneNum","园区"+(i/year+1));
-                object.put("yearNum","第"+(i%year+1)+"年");
+                object.put("yearNum",(i%year+1));
                 object.put("goal", new DecimalFormat("#.0000").format(goal));
                 array.add(object);
             }

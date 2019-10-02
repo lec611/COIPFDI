@@ -33,6 +33,13 @@
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
 
+    <style type="text/css">
+        .layui-side .left-nav-index{
+            fixwidth: true;
+            width: 300px;
+        }
+    </style>
+
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -45,6 +52,14 @@
         </ul>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left head-nav-left">
+            <li class="dropdown pull-right layui-nav-item">
+                <select class="form-control dropdown" id="chartType" style="color: black;margin-top: 13px;">
+                    <option value="0">柱状图</option>
+                    <option value="1">折线图</option>
+                    <option value="2">饼图</option>
+                    <option value="3">雷达图</option>
+                </select>
+            </li>
             <li class="dropdown pull-right layui-nav-item">
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle">帮助</a>
                 <ul class="dropdown-menu">
@@ -77,119 +92,16 @@
                     </li>
                 </ul>
             </li>
-            <li class="dropdown pull-right layui-nav-item">
-                <a href="#" data-toggle="dropdown" class="dropdown-toggle">编辑</a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#" style="color:black;">撤销</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">清除</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;" data-toggle="dropdown" class="dropdown-toggle">结果显示方式</a>
-                        <ul style="text-align: right;">
-                            <li>
-                                <%--									<a href="#" style="color:black;" onclick="javascript:zhuzhuangChart();return false;">柱状图</a>--%>
-                                <a href="#" style="color:black;"
-                                   onclick="javascript:showBarChart();return false;">柱状图</a>
-                            </li>
-                            <li>
-                                <%--									<a href="#" style="color:black;" onclick="javascript:zhexianChart();return false;">折线图</a>--%>
-                                <a href="#" style="color:black;"
-                                   onclick="javascript:showLineChart();return false;">折线图</a>
-                            </li>
-                            <li>
-                                <a href="#" style="color:black;" onclick="javascript:bingChart();return false;">饼图</a>
-                                <%--									<a href="#" style="color:black;" onclick="javascript:showPieChart();return false;">饼图</a>--%>
-                            </li>
-                            <li>
-                                <a href="#" style="color:black;" onclick="javascript:leidaChart();return false;">雷达图</a>
-                                <%--									<a href="#" style="color:black;" onclick="javascript:showRadarChart();return false;">雷达图</a>--%>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">字体</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">字号</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="dropdown pull-right layui-nav-item">
-                <a href="#" data-toggle="dropdown" class="dropdown-toggle">文件</a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#" style="color:black;">打开</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">关闭</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">保存</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">另存为</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">导出</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">导入</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">打印</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">上载</a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <a href="#" style="color:black;">退出</a>
-                    </li>
-                </ul>
-            </li>
-            <!--禁止删除-->
-            <li class="layui-nav-item" id="adminMenu">
-
-            </li>
         </ul>
         <ul class="layui-nav layui-layout-right head-nav-right">
             <div class="btn-group" style="margin-right:20px">
-                <button type="button" class="btn btn-default" onclick="window.location.href='login.jsp'">登录</button>
-                <button type="button" class="btn btn-default" onclick="window.location.href='register.jsp'">注册</button>
+                <button type="button" class="btn btn-default" id="loginButton"><a href="${ctx}/login">登录</a></button>
+                <button type="button" class="btn btn-default" id="registerButton"><a href="${ctx}/register">注册</a></button>
+                <label  class="btn" style="display:none" id="userInfoButton" href="${ctx}/userInfo.jsp"></label>
+                <label  class="btn" id="logoutButton" style="display: none;" onclick="logout();">退出登录</label>
             </div>
-            <button type="button" class="btn btn-primary btn-lg" style="font-size:12px;display:none;margin-right:20px">
-                <span class="glyphicon glyphicon-user"></span> User
-            </button>
             <li class="layui-nav-item">
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="calculation();"
-                        id="calculateBtn">运行计算
-                </button>
+                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="calculation();" id="calculateBtn">运行计算</button>
             </li>
         </ul>
 
@@ -208,51 +120,42 @@
                         <ul class=" layui-nav-tree" lay-filter="test" id="verticalMenu">
                             <li class="layui-nav-item">园区个数
                                 <DIV style="POSITION: relative">
-                                    <SELECT name="districtSelect" class="form-control"
-                                            style=" WIDTH: 120px; CLIP: rect(0px auto auto 80px); POSITION: relative" id="numCount"
-                                            onchange="document.getElementById('districtNum').value=this.options[this.selectedIndex].value">
+                                    <SELECT class="form-control" id="numCount"
+                                            style="  CLIP: rect(0px auto auto 80px); POSITION: relative">
                                         <%
                                             for (int i = 1; i <= 1000; i++) {
                                                 out.print("<OPTION value='" + i + "'>" + i + "</OPTION>");
                                             }
                                         %>
                                     </SELECT>
-                                    <INPUT id="districtNum" name="districtNum" class="form-control"
-                                           style="LEFT: 2px; TOP: 2px; WIDTH: 92px;height:28px; POSITION: absolute;border:0">
                                 </DIV>
                             </li>
                             <li class="layui-nav-item">时间序列
                                 <DIV style="POSITION: relative">
-                                    <SELECT name="districtSelect" class="form-control"
-                                            style=" WIDTH: 120px; CLIP: rect(0px auto auto 80px); POSITION: relative" id="timeSequence"
-                                            onchange="document.getElementById('districtTime').value=this.options[this.selectedIndex].value">
+                                    <SELECT class="form-control" id="timeSequence"
+                                            style="CLIP: rect(0px auto auto 80px); POSITION: relative">
                                         <%
                                             for (int i = 1; i <= 1000; i++) {
                                                 out.print("<OPTION value='" + i + "'>" + i + "</OPTION>");
                                             }
                                         %>
                                     </SELECT>
-                                    <INPUT id="districtTime" name="districtTime" class="form-control"
-                                           style="LEFT: 2px; TOP: 2px; WIDTH: 92px;height:28px; POSITION: absolute;border:0">
                                 </DIV>
                             </li>
                             <li class="layui-nav-item">园区类型数
                                 <DIV style="POSITION: relative">
-                                    <SELECT name="typeCount" class="form-control"
-                                            style=" WIDTH: 120px; CLIP: rect(0px auto auto 80px); POSITION: relative" id="typeCountSel"
-                                            onchange="document.getElementById('typeCount').value=this.options[this.selectedIndex].value">
+                                    <SELECT class="form-control" id="typeCountSel"
+                                            style="CLIP: rect(0px auto auto 80px); POSITION: relative">
                                         <%
                                             for (int i = 1; i <= 1000; i++) {
                                                 out.print("<OPTION value='" + i + "'>" + i + "</OPTION>");
                                             }
                                         %>
                                     </SELECT>
-                                    <INPUT id="typeCount" name="districtTime" class="form-control"
-                                           style="LEFT: 2px; TOP: 2px; WIDTH: 92px;height:28px; POSITION: absolute;border:0">
                                 </DIV>
                             </li>
                             <li class="layui-nav-item">园区类型
-                                <select class="form-control" style="width:180px;" id="type">
+                                <select class="form-control" id="type">
                                     <option value="0" slected>经贸合作区</option>
                                     <option value="1">工业园</option>
                                     <option value="2">科技园</option>
@@ -263,7 +166,7 @@
                                 </select>
                             </li>
                             <li class="layui-nav-item">自定义模式
-                                <select class="form-control" style="width:180px;" id="customize">
+                                <select class="form-control" id="customize">
                                     <option value="0" selected>否</option>
                                     <option value="1">是</option>
                                 </select>
@@ -308,8 +211,10 @@
         </div>
     </div>
 
-    <div class="layui-body left-nav-body" style="left:20%">
+    <div class="layui-body left-nav-body" style="left:273px">
         <!-- 内容主体区域 -->
+
+        <!--左边文章列表-->
         <div class="blog-main">
             <!--左边栏目--><!-- 数据输入部分 -->
             <div class="blog-main-left" id="blog-main-left">
@@ -323,8 +228,7 @@
                                 <div class="form-group">
                                     文件输入
                                     <button type="button" class="btn btn-default" style="margin-left: 0px" onclick="fileCalculate()">确定</button>
-                                    <br><input type="file" id="inputFile" class="form-control">
-
+                                    <br><input type="file" id="inputFile" class="form-control" name="inputFile">
                                 </div>
                             </td>
                         </tr>
@@ -402,12 +306,7 @@
                         </tr>
                         <tr>
                             <td>文件输出
-                                <button type="button" class="btn btn-default" id="btnFileOutput" onclick="filePDFOutput();">浏览</button>
-<%--                                <h2 class="layui-colla-title layui-btn-sm" style="background-color: #009688">浏览</h2>--%>
-<%--                                <div class="layui-colla-content">--%>
-<%--                                    <span class="layui-btn" data-status='1' onclick="filePDFOutput();">导出PDF</span>--%>
-<%--                                    <span class="layui-btn" data-status='0' onclick="fileExcelOutput();">导出Excel</span>--%>
-<%--                                </div>--%>
+                                <button type="button" class="btn btn-default">浏览</button>
                             </td>
                         </tr>
                         <tr>
@@ -428,7 +327,7 @@
         <div class="clear"></div>
     </div>
 
-    <div class="layui-footer" style="left:20%">
+    <div class="layui-footer">
         <!-- 底部固定区域 -->
         <button class="layui-btn layui-btn-primary layui-btn-sm" id="back" style="display: none;">
             <i class="fa fa-chevron-left" aria-hidden="true"></i>
@@ -448,8 +347,6 @@
 <script src='static/js/pdfobject.js'></script>
 <script src="static/plug/qrcodejs/qrcode.js"></script>
 <script src="static/js/canvasjs.min.js"></script>
-<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
-<script src="https://cdn.bootcss.com/jspdf/1.3.4/jspdf.debug.js"></script>
 <!-- ECharts单文件引入 -->
 <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
 <script>
@@ -458,11 +355,24 @@
     var userInfo = {};
     userInfo.id = "${user.id}";
     userInfo.name = "${user.name}";
-    userInfo.email = "${user.email}";
-    userInfo.level = "${user.level}";
-    userInfo.active = "${user.active}";
+    var data={};//存放后台返回的JSON数据
     var authEnum = ["游客可见", "注册用户可见", "VIP用户可见", "管理员可见"];
     var activeEnum = ["通过", "待审核", "未通过"];
+
+    //可行
+    // $(function () {
+    //     $('#chartType').on('change',function () {
+    //         var chartTypeC=null;
+    //         $("chartType li").click(function(){
+    //             chartTypeC=$(this).html();
+    //         })
+    //         $('chartType li').click(function () {
+    //             var type=parseInt($(this).text);
+    //             alert("type"+type);
+    //         })
+    //         alert("图选择："+chartTypeC);
+    //     })
+    // })
 
     // layui框架导航模块初始化，禁止删除
     var layer, element;
@@ -516,29 +426,25 @@
 
     // 显示用户信息
     function checkUserLogin() {
-        if (userInfo != null && userInfo.id != null && userInfo.id != -1) {
-            $("#loginButton").hide();
-            var html = "";
-            html = html + '<a href="javascript:;">' + userInfo.name + '</a>'
-                + '<dl class="layui-nav-child">'
-                + '<dd><a href="${ctx}/updatePassword">修改密码</a></dd>'
-                + '<dd style="text-align: center;"><a href="javascript:;" onclick="logout();">退出</a></dd>'
-                + '</dl>';
-            $("#userInfoButton").html(html);
-            $("#userInfoButton").show();
-        } else {
-            $("#loginButton").show();
-            $("#userInfoButton").hide();
-        }
+        var name="<%=session.getAttribute("name")%>";
+        var ticket="<%=session.getAttribute("ticket")%>";
+        // alert(name);
+        // alert(ticket);
 
-        if (userInfo != null && userInfo.level != null && userInfo.level == 3) {
+        if(name!=null&&ticket!=null&&name!="null"&&ticket!="null"){
+            document.getElementById('loginButton').style.display='none';
+            document.getElementById('registerButton').style.display='none';
+            document.getElementById('userInfoButton').style.display='block';
+            document.getElementById('logoutButton').style.display='block';
             var html = "";
-            html = html + '<a href="javascript:;">管理员</a>\n' +
-                '                <dl class="layui-nav-child">\n' +
-                '                    <dd><a href="javascript:;" onclick="doClickHorizontalMenu(\'true\', \'false\');">文献审核</a></dd>\n' +
-                '                    <dd><a href="javascript:;" onclick="doClickShowUserManagement(1);">用户管理</a></dd>\n' +
-                '                </dl>'
-            $("#adminMenu").html(html);
+            html = html + '<a href="${ctx}/userInfo.jsp;">欢迎' + name + '</a>';
+            $("#userInfoButton").html(html);
+        }
+        else{
+            document.getElementById('loginButton').style.display='block';
+            document.getElementById('registerButton').style.display='block';
+            document.getElementById('userInfoButton').style.display='none';
+            document.getElementById('logoutButton').style.display='none';
         }
     }
 
@@ -548,6 +454,10 @@
             type: "get",
             url: "${ctx}/reglogin/logout",
             success: function (data) {
+                document.getElementById('loginButton').style.display='block';
+                document.getElementById('registerButton').style.display='block';
+                document.getElementById('userInfoButton').style.display='none';
+                document.getElementById('logoutButton').style.display='none';
                 if (data.code != 200) {
                     layer.msg(data.msg, {icon: 2});
                     return false;
@@ -961,52 +871,6 @@
         });
     }
 
-    // 导出PDF文件
-    function filePDFOutput(){
-        var target = document.getElementsByClassName("blog-main");
-        html2canvas(target).then(function (canvas)
-            {
-                var contentWidth = canvas.width;
-                var contentHeight = canvas.height;
-
-                //一页pdf显示html页面生成的canvas高度;
-                var pageHeight = contentWidth / 592.28 * 841.89;
-                //未生成pdf的html页面高度
-                var leftHeight = contentHeight;
-                //pdf页面偏移
-                var position = 0;
-                //html页面生成的canvas在pdf中图片的宽高（a4纸的尺寸[595.28,841.89]）
-                var imgWidth = 595.28;
-                var imgHeight = 592.28 / contentWidth * contentHeight;
-
-                var pageData = canvas.toDataURL('image/jpeg', 1.0);
-                var pdf = new jsPDF('', 'pt', 'a4');
-
-                //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
-                //当内容未超过pdf一页显示的范围，无需分页
-                if (leftHeight < pageHeight) {
-                    pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
-                } else {
-                    while (leftHeight > 0) {
-                        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-                        leftHeight -= pageHeight;
-                        position -= 841.89;
-                        //避免添加空白页
-                        if (leftHeight > 0) {
-                            pdf.addPage();
-                        }
-                    }
-                }
-                pdf.save('中国境外产业园区融合发展指数测度.pdf');
-            }
-        );
-    }
-
-    // 导出Excel文件
-    function fileExcelOutput(){
-
-    }
-
     function editeDoc(docId) {
         location.href = '${ctx}/docOperation';
         window.localStorage.setItem('docId', docId);
@@ -1122,7 +986,9 @@
         );
     }
 
-    function bingChart() {
+    function bingChart(result) {
+
+        var data = eval('('+result+')');
 
         // 路径配置
         require.config({
@@ -1130,12 +996,6 @@
                 echarts: 'http://echarts.baidu.com/build/dist'
             }
         });
-
-        var data = {
-            'count': 4,
-            'name': ['园区一', '园区二', '园区三', '园区四'],
-            'num': [200, 300, 400, 500]
-        };
 
         // 使用
         require(
@@ -1148,8 +1008,8 @@
                 var myChart = ec.init(document.getElementById('chartContainer'));
 
                 var str = "[";
-                for (var i = 0; i < data['count']; i++) {
-                    var temp = "{value: " + data['num'][i] + ", name: '" + data['name'][i] + "'},";
+                for (var i = 0; i < data.length; i++) {
+                    var temp = "{value: " + data[i]['goal'] + ", name: '" + data[i]['zoneNum'] +'第'+data[i]['yearNum']+'年'+data[i]['goal']+ "'},";
                     str += temp;
                 }
                 str += "]";
@@ -1175,13 +1035,14 @@
 
                 // 为echarts对象加载数据
                 myChart.setOption(option);
-
-
             }
         );
     }
 
-    function zhexianChart() {
+    function zhexianChart(result) {
+        var data = eval('('+result+')');
+        var year=data[0]['year'];
+
         // 路径配置
         require.config({
             paths: {
@@ -1199,56 +1060,75 @@
                 // 基于准备好的dom，初始化echarts图表
                 var myChart = ec.init(document.getElementById('chartContainer'));
 
+                var str="[";//结果
+                var strX="";//横坐标
+                // var legendStr="{data:[";//折线代表名称
+                var legendData=[];
+                // for(var i=0;i<year-1;i++)
+                // {
+                //     // legendData[i]=data[year*i]['zoneNum'];
+                //     legendStr+="'"+data[year*i]['zoneNum']+"',";
+                // }
+                // legendStr+="'"+data[i*year]['zoneNum']+"'],},";
+                // legendData[i]=data[year*i]['zoneNum'];
+                // legendStr+=legendData+"],},";
+                // alert(legendStr);
+                for(var i=0;i<year-1;i++)
+                {
+                    strX+=data[i]['yearNum'];
+                }
+                strX+=data[i]['yearNum'];
+                for(var i=0;i<(data.length/year);i++)
+                {
+                    var arr=[];
+                    for(var j=0;j<year;j++)
+                    {
+                        arr[j]=parseInt(data[i+j]['goal']);
+                    }
+                    str+="{name:'"+data[i]['zoneNum']+"',type:'line',data:["+arr+"]},";
+                }
+                str+="]";
                 option = {
                     calculable: true,
+                    // legend:legendStr,
+                    // legend:{
+                    //     data:['园区一','园区二','园区三'],
+                    // },
                     xAxis: [
                         {
                             type: 'category',
                             boundaryGap: false,
-                            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                            data: strX
+                                // ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
                         }
                     ],
                     yAxis: [
                         {
                             type: 'value',
-                            axisLabel: {
-                                formatter: '{value} °C'
-                            }
+                            // axisLabel: {
+                            //     formatter: '{value}'
+                            // }
                         }
                     ],
-                    series: [
-                        {
-                            name: '最高气温',
-                            type: 'line',
-                            data: [11, 11, 15, 13, 12, 13, 10],
-                            markPoint: {
-                                data: [
-                                    {type: 'max', name: '最大值'},
-                                    {type: 'min', name: '最小值'}
-                                ]
-                            },
-                            markLine: {
-                                data: [
-                                    {type: 'average', name: '平均值'}
-                                ]
-                            }
-                        },
-                        {
-                            name: '最低气温',
-                            type: 'line',
-                            data: [1, -2, 2, 5, 3, 2, 0],
-                            markPoint: {
-                                data: [
-                                    {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
-                                ]
-                            },
-                            markLine: {
-                                data: [
-                                    {type: 'average', name: '平均值'}
-                                ]
-                            }
-                        }
-                    ]
+                    series:eval(str)
+                    //     [
+                    //     {
+                    //         name: '最高气温',
+                    //         type: 'line',
+                    //         data: [11, 11, 15, 13, 12, 13, 10],
+                    //         markPoint: {
+                    //             data: [
+                    //                 {type: 'max', name: '最大值'},
+                    //                 {type: 'min', name: '最小值'}
+                    //             ]
+                    //         },
+                    //         markLine: {
+                    //             data: [
+                    //                 {type: 'average', name: '平均值'}
+                    //             ]
+                    //         }
+                    //     },
+                    // ]
                 };
 
                 // 为echarts对象加载数据
@@ -1257,19 +1137,16 @@
         );
     }
 
-    function leidaChart() {
+    function leidaChart(result) {
+
+        var data = eval('('+result+')');
+
         // 路径配置
         require.config({
             paths: {
                 echarts: 'http://echarts.baidu.com/build/dist'
             }
         });
-
-        var data = {
-            'count': 4,
-            'name': ['园区一', '园区二', '园区三', '园区四'],
-            'num': [20000, 30000, 40000, 50000]
-        };
 
         // 使用
         require(
@@ -1282,11 +1159,17 @@
                 var myChart = ec.init(document.getElementById('chartContainer'));
 
                 var str = "[";
-                for (var i = 0; i < data['count']; i++) {
-                    var temp = "{text: '" + data['name'][i] + "', max: " + data['num'][i] + "},";
+                for (var i = 0; i < data.length; i++) {
+                    var temp = "{text: '" + data[i]['zoneNum'] +'第'+data[i]['yearNum']+ "年', max: 100},";
                     str += temp;
                 }
                 str += "]";
+
+                var str1 = "[{value: [";
+                for (var i = 0; i < data.length; i++) {
+                    str1 += data[i]['goal']+",";
+                }
+                str1 += "],},]";
 
                 option = {
                     polar: [
@@ -1305,16 +1188,13 @@
                         {
                             name: '预算 vs 开销（Budget vs spending）',
                             type: 'radar',
-                            data: [
-                                {
-                                    value: [4300, 10000, 28000, 35000, 50000, 19000],
-                                    name: '预算分配（Allocated Budget）'
-                                },
-                                {
-                                    value: [5000, 14000, 28000, 31000, 42000, 21000],
-                                    name: '实际开销（Actual Spending）'
-                                }
-                            ]
+                            data: eval(str1)
+                                // [{value: [4300, 10000, 28000, 35000, 50000, 19000], name: '预算分配（Allocated Budget）'},
+                                // {
+                                //     value: [5000, 14000, 28000, 31000, 42000, 21000],
+                                //     name: '实际开销（Actual Spending）'
+                                // }
+                            // ]
                         }
                     ]
                 };
@@ -1324,71 +1204,28 @@
         );
     }
 
-    var data0 = {
-        'type': 0,
-        'time': [2017, 2018, 2019],
-        'country': "阿富汗",
-        'data': [[1.1, 1.3, 1.5, 1.2], [1.7, 2.3, 1.1, 2.3], [1.2, 1.0, 1.8, 1.7]]
-    };
-    var data1 = {
-        'type': 1,
-        'time': 2019,
-        'country': ['USA', 'UK', 'China'],
-        'data': [[2.1, 2.3, 2.1, 2.6], [2.1, 2.3, 2.1, 2.6], [2.1, 2.3, 2.1, 2.6]]
-    };
-
-    function showBarChart() {//柱状图
-        var data = {
-            'type': 0,
-            'time': [2017, 2018, 2019],
-            'country': "园区融合发展指数",
-            'data': [[1.1, 1.3, 1.5, 1.2], [1.7, 2.3, 1.1, 2.3], [1.2, 1.0, 1.8, 1.7]]
-        };
-        var type = data['type'];
+    function showBarChart(result) {//柱状图
+        var data = eval('('+result+')');
         charData = [];
-        var title_text;
-        if (type == 0) {
-            title_text = data['country'];
-            for (var i = 0; i < data['data'].length; i++) {
-                var column = {
-                    type: "column",
-                    name: data['country'] + data['time'][i] + '年的数据',
-                    legendText: "" + data['time'][i],
-                    showInLegend: true,
-                    dataPoints: [
-                        {label: "园区一", y: data['data'][i][0]},
-                        {label: "园区二", y: data['data'][i][1]},
-                        {label: "园区三", y: data['data'][i][2]},
-                        {label: "园区四", y: data['data'][i][3]},
-                    ]
-                };
-                charData.push(column);
-            }
-        } else if (type == 1) {
-            title_text = "各园区" + data['time'] + "年指数对比";
-            for (var i = 0; i < data['data'].length; i++) {
-                var column = {
-                    type: "column",
-                    name: data['country'][i] + data['time'] + '年的数据',
-                    legendText: "" + data['country'][i],
-                    showInLegend: true,
-                    dataPoints: [
-                        {label: "政治风险", y: data['data'][i][0]},
-                        {label: "经济风险", y: data['data'][i][1]},
-                        {label: "社会风险", y: data['data'][i][2]},
-                        {label: "综合风险", y: data['data'][i][3]},
-                    ]
-                };
-                charData.push(column);
-            }
-
+        for (var i = 0; i < data.length; i++) {
+            var column = {
+                type: "column",
+                name: data[i]['zoneNum'] +'第'+ data[i]['yearNum'] + '年的数据',
+                legendText: "" + data[i]['zoneNum'],
+                showInLegend: true,
+                dataPoints: [
+                    {label: ""+data[i]['zoneNum']+"第"+data[i]['yearNum']+"年", y: parseInt(data[i]['goal'])},
+                    // {label: ""+data[i]['zoneNum']+data[i]['yearNum'], y: 10},
+                ]
+            };
+            charData.push(column);
         }
 
         var chart = new CanvasJS.Chart("chartContainer", {
             animationEnabled: true,
-            title: {
-                text: title_text
-            },
+            // title: {
+            //     text: title_text
+            // },
             toolTip: {
                 shared: true
             },
@@ -1410,23 +1247,19 @@
         }
     }
 
-    function showLineChart() {
-        var data = {
-            'type': 0,
-            'time': [2017, 2018, 2019],
-            'country': "园区融合发展指数",
-            'data': [[1.1, 1.3, 1.5, 1.2], [1.7, 2.3, 1.1, 2.3], [1.2, 1.0, 1.8, 1.7]]
-        };
-        var type = data['type'];
+    function showLineChart(result) {
+        var data=eval('('+result+')');
+        var year=data[0]['year'];
+
         charData = [];
-        risk = ["园区一", "园区二", "园区三", "园区四"];
+        risk = ["政治风险", "经济风险", "社会风险", "综合风险"];
         var title_text;
-        if (type == 0) {
-            title_text = data['country'];
-            for (var i = 0; i < 4; i++) {
+        // if (type == 0) {
+        //     title_text = data['country'];
+            for (var i = 0; i < data.length; i+=3) {
                 dataPts = [];
-                for (var j = 0; j < data['time'].length; j++) {
-                    var pts = {x: new Date(data['time'][j], 0, 0), y: data['data'][j][i]};
+                for (var j = i; j < (i+year); j++) {
+                    var pts = {x: new Date(data[i]['yearNum'], 0, 0), y: data[i]['goal']};
                     dataPts.push(pts);
                 }
                 var line = {
@@ -1437,33 +1270,35 @@
                 };
                 charData.push(line);
             }
-        } else if (type == 1) {
-            for (var i = 0; i < 4; i++) {
-                dataPts = [];
-                for (var j = 0; j < data['country'].length; j++) {
-                    // var pts = {x:new ()}
-                }
-                var column = {
-                    type: "column",
-                    name: data['country'][i] + data['time'] + '年的数据',
-                    legendText: "" + data['country'][i],
-                    showInLegend: true,
-                    dataPoints: [
-                        {label: "政治风险", y: data['data'][i][0]},
-                        {label: "经济风险", y: data['data'][i][1]},
-                        {label: "社会风险", y: data['data'][i][2]},
-                        {label: "综合风险", y: data['data'][i][3]},
-                    ]
-                };
-                charData.push(column);
-            }
-
-        }
+        // } else if (type == 1) {
+        //     for (var i = 0; i < data.length; i++) {
+        //         var str="[";
+        //         for(var j=0;j<year;j++)
+        //         {
+        //             str+="{label: "+data[j]['zoneNum']+", y: "+parseInt(data[j]['goal'])+"},";
+        //         }
+        //         str+="]";
+        //         // dataPts = [];
+        //         var column = {
+        //             type: "column",
+        //             name: data['zoneNum'][i] + data['yearNum'] + '年的数据',
+        //             legendText: "" + data['zoneNum'][i],
+        //             showInLegend: true,
+        //             dataPoints: str
+        //                 // [
+        //                 // {label: "经济风险", y: data['data'][i][1]},
+        //                 // {label: "社会风险", y: data['data'][i][2]},
+        //                 // {label: "综合风险", y: data['data'][i][3]},
+        //             // ]
+        //         };
+        //         charData.push(column);
+        //     }
+        // }
 
         var chart = new CanvasJS.Chart("chartContainer", {
-            title: {
-                text: data['country']
-            },
+            // title: {
+            //     text: data['country']
+            // },
             axisX: {
                 valueFormatString: "YYYY"
             },
@@ -1487,13 +1322,6 @@
             e.chart.render();
         }
     }
-
-    <%--function createNode(txt) {--%>
-    <%--    const template = `<div class='child'>${txt}</div>`;--%>
-    <%--    let tempNode = document.createElement('div');--%>
-    <%--    tempNode.innerHTML = template;--%>
-    <%--    return tempNode.firstChild;--%>
-    <%--}--%>
 
     function calculation() {
         debugger;
@@ -1523,49 +1351,6 @@
         });
     }
 
-    function fileCalculate() {
-        //园区个数
-        var Obj1 = document.getElementById("numCount");
-        var index1 = Obj1.selectedIndex;
-        var text1 = Obj1.options[index1].text;
-        //时间序列
-        var Obj2 = document.getElementById("timeSequence");
-        var index2 = Obj2.selectedIndex;
-        var text2 = Obj2.options[index2].text;
-        //园区类型数
-        var Obj3 = document.getElementById("typeCountSel");
-        var index3 = Obj3.selectedIndex;
-        var text3 = Obj3.options[index3].text;
-        //园区类型
-        var Obj4 = document.getElementById("type");
-        var index4 = Obj4.selectedIndex;
-        var text4 = Obj4.options[index4].text;
-
-        var formData = new FormData();
-        formData.append('file', $('#inputFile')[0].files[0]); // 固定格式
-        formData.append('numCount', text1);
-        formData.append('timeCount', text2);
-        formData.append('typeCount', text3);
-        formData.append('type', text4);
-
-        $.ajax({
-            url:'${ctx}/calculate/file',	//后台接收数据地址
-            data:formData,
-            type: "POST",
-            dataType: "json",
-            cache: false,			//上传文件无需缓存
-            processData: false,		//用于对data参数进行序列化处理 这里必须false
-            contentType: false,
-            success:function(data){
-                alert("文件上传成功！");
-                alert(data);
-            },
-            failure: function () {
-                alert("文件上传失败！");
-            }
-        })
-    }
-
     function showResultInChartContainer(data) {
         let str;
         if(data<20){
@@ -1587,9 +1372,70 @@
         container.innerText = "融合化发展指数\n"+data+"\n融合化发展水平"+str;
         container.style.fontSize = '30px';
         container.style.textAlign = 'center';
-        container.style.verticalAlign = "middle";
-
+        container.style.marginTop='130px';
     }
+
+    function fileCalculate() {
+        //园区个数
+        var Obj1 = document.getElementById("numCount");
+        var index1 = Obj1.selectedIndex;
+        var text1 = Obj1.options[index1].text;
+        //时间序列
+        var Obj2 = document.getElementById("timeSequence");
+        var index2 = Obj2.selectedIndex;
+        var text2 = Obj2.options[index2].text;
+        //园区类型数
+        var Obj3 = document.getElementById("typeCountSel");
+        var index3 = Obj3.selectedIndex;
+        var text3 = Obj3.options[index3].text;
+        //园区类型
+        var Obj4 = document.getElementById("type");
+        var index4 = Obj4.selectedIndex;
+        var text4 = Obj4.options[index4].text;
+        //图类型
+        var Obj5 = document.getElementById("chartType");
+        var index5 = Obj5.selectedIndex;
+        var value = Obj5.options[index5].value;
+
+        var formData = new FormData();
+        formData.append('file', $('#inputFile')[0].files[0]); // 固定格式
+        formData.append('numCount', text1);
+        formData.append('timeCount', text2);
+        formData.append('typeCount', text3);
+        formData.append('type', text4);
+        formData.append('chartType', value);
+
+        $.ajax({
+            url:'${ctx}/calculate/file',	//后台接收数据地址
+            data:formData,
+            type: "POST",
+            dataType: "json",
+            cache: false,			//上传文件无需缓存
+            processData: false,		//用于对data参数进行序列化处理 这里必须false
+            contentType: false,
+            success:function(result){
+                alert("文件上传成功！");
+                var data=eval('('+result+')');
+                var chaType=data[0]['chartType'];
+                if(chaType==0){
+                    showBarChart(result);
+                }
+                else if(chaType==1) {
+                    zhexianChart(result);
+                }
+                else if(chaType==2){
+                    bingChart(result);
+                }
+                else if(chaType==3){
+                    leidaChart(result);
+                }
+            },
+            failure: function (data) {
+                alert(data+"文件上传失败！");
+            }
+        })
+    }
+
 
 </script>
 </html>

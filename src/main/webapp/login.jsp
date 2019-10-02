@@ -112,6 +112,7 @@
                 dataType: 'json',
                 success: function (data) {
                     if (data.code !== 200) {
+                        alert("登陆失败，请重新登录！");
                         layer.msg(data.msg,{icon: 2});
                         changeCaptcha();
                         return false;
