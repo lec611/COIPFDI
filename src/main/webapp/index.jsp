@@ -211,10 +211,8 @@
         </div>
     </div>
 
-    <div class="layui-body left-nav-body" style="left:273px">
+    <div class="layui-body left-nav-body" style="left:20%">
         <!-- 内容主体区域 -->
-
-        <!--左边文章列表-->
         <div class="blog-main">
             <!--左边栏目--><!-- 数据输入部分 -->
             <div class="blog-main-left" id="blog-main-left">
@@ -306,7 +304,12 @@
                         </tr>
                         <tr>
                             <td>文件输出
-                                <button type="button" class="btn btn-default">浏览</button>
+                                <button type="button" class="btn btn-default" id="btnFileOutput" onclick="fileExcelOutput();">浏览</button>
+<%--                                <h2 class="layui-colla-title layui-btn-sm" style="background-color: #009688">浏览</h2>--%>
+<%--                                <div class="layui-colla-content">--%>
+<%--                                    <span class="layui-btn" data-status='1' onclick="filePDFOutput();">导出PDF</span>--%>
+<%--                                    <span class="layui-btn" data-status='0' onclick="fileExcelOutput();">导出Excel</span>--%>
+<%--                                </div>--%>
                             </td>
                         </tr>
                         <tr>
@@ -327,7 +330,7 @@
         <div class="clear"></div>
     </div>
 
-    <div class="layui-footer">
+    <div class="layui-footer" style="left:20%">
         <!-- 底部固定区域 -->
         <button class="layui-btn layui-btn-primary layui-btn-sm" id="back" style="display: none;">
             <i class="fa fa-chevron-left" aria-hidden="true"></i>
@@ -347,6 +350,8 @@
 <script src='static/js/pdfobject.js'></script>
 <script src="static/plug/qrcodejs/qrcode.js"></script>
 <script src="static/js/canvasjs.min.js"></script>
+<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+<script src="https://cdn.bootcss.com/jspdf/1.3.4/jspdf.debug.js"></script>
 <!-- ECharts单文件引入 -->
 <script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
 <script>
@@ -358,21 +363,7 @@
     var data={};//存放后台返回的JSON数据
     var authEnum = ["游客可见", "注册用户可见", "VIP用户可见", "管理员可见"];
     var activeEnum = ["通过", "待审核", "未通过"];
-
-    //可行
-    // $(function () {
-    //     $('#chartType').on('change',function () {
-    //         var chartTypeC=null;
-    //         $("chartType li").click(function(){
-    //             chartTypeC=$(this).html();
-    //         })
-    //         $('chartType li').click(function () {
-    //             var type=parseInt($(this).text);
-    //             alert("type"+type);
-    //         })
-    //         alert("图选择："+chartTypeC);
-    //     })
-    // })
+    var outputOpt = "无输入";
 
     // layui框架导航模块初始化，禁止删除
     var layer, element;
@@ -871,6 +862,126 @@
         });
     }
 
+    // 导出PDF文件
+    function filePDFOutput(){
+        var target = document.getElementsByClassName("blog-main");
+        html2canvas(target).then(function (canvas)
+            {
+                var contentWidth = canvas.width;
+                var contentHeight = canvas.height;
+
+                //一页pdf显示html页面生成的canvas高度;
+                var pageHeight = contentWidth / 592.28 * 841.89;
+                //未生成pdf的html页面高度
+                var leftHeight = contentHeight;
+                //pdf页面偏移
+                var position = 0;
+                //html页面生成的canvas在pdf中图片的宽高（a4纸的尺寸[595.28,841.89]）
+                var imgWidth = 595.28;
+                var imgHeight = 592.28 / contentWidth * contentHeight;
+
+                var pageData = canvas.toDataURL('image/jpeg', 1.0);
+                var pdf = new jsPDF('', 'pt', 'a4');
+
+                //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+                //当内容未超过pdf一页显示的范围，无需分页
+                if (leftHeight < pageHeight) {
+                    pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
+                } else {
+                    while (leftHeight > 0) {
+                        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+                        leftHeight -= pageHeight;
+                        position -= 841.89;
+                        //避免添加空白页
+                        if (leftHeight > 0) {
+                            pdf.addPage();
+                        }
+                    }
+                }
+                pdf.save('中国境外产业园区融合发展指数测度.pdf');
+            }
+        );
+    }
+
+    // 导出Excel文件
+    function fileExcelOutput(){
+        if(outputOpt == "表格输出"){
+            var array = new Array(15);
+            for (var i = 0; i < 7; i++) {
+                array[i] = document.getElementById(("data" + i).toString()).value;
+            }
+            for (var i = 0; i < 7; i++) {
+                array[7 + i] = document.getElementById(("weight" + i).toString()).value;
+            }
+            var typeObj = document.getElementById("type");
+            var typeindex = typeObj.selectedIndex;
+            var type = typeObj.options[typeindex].text;
+
+            var customizeObj = document.getElementById("customize");
+            var customizeindex = customizeObj.selectedIndex;
+            var customize = customizeObj.options[customizeindex].text;
+
+            $.ajax({
+                type: 'post',
+                url: '${ctx}/calculate/outputTable',
+                data:{"array": JSON.stringify(array), "type": type, "customize": customize},
+                responseType: 'blob',
+                success: function (res) {
+
+                    //console.log(res);
+
+                    //res 是后台返回的结果
+                    const content = res.data;
+                    const blob = new Blob([content]);
+                    const fileName = "融合指数测度表.xls"; //下载的文件名称
+                    if ('download' in document.createElement('a')) { // 非IE下载
+                        const elink = document.createElement('a');
+                        elink.download = fileName;
+                        elink.style.display = 'none';
+                        elink.href = URL.createObjectURL(blob);
+                        document.body.appendChild(elink);
+                        elink.click();
+                        URL.revokeObjectURL(elink.href); // 释放URL对象
+                        document.body.removeChild(elink);
+                    } else { // IE10+下载
+                        navigator.msSaveBlob(blob, fileName);
+                    }
+
+                    // const blob = new Blob([res.data], {type: "application/vnd.ms-excel"});//new Blob([res])中不加data就会返回[objece objece]内容（少取一层）
+                    // const fileName = '融合指数测度表.xlsx';//下载文件名称
+                    // const elink = document.createElement('a');
+                    // elink.download = fileName;
+                    // elink.style.display = 'none';
+                    // elink.href = URL.createObjectURL(blob);
+                    // document.body.appendChild(elink);
+                    // elink.click();
+                    // URL.revokeObjectURL(elink.href); // 释放URL 对象
+                    // document.body.removeChild(elink);
+
+                    // let blob = new Blob([res.data], {type: "application/vnd.ms-excel"});
+                    // let objectUrl = URL.createObjectURL(blob);
+                    // window.location.href = objectUrl;
+
+                    // const link = document.createElement('a');
+                    // let blob = new Blob([res.data],{type: 'application/ms-excel'});
+                    // link.style.display = 'none';
+                    // link.href = URL.createObjectURL(blob);
+                    // link.setAttribute('download', '用户_wjx.xlsx');
+                    // document.body.appendChild(link);
+                    // link.click();
+                    // document.body.removeChild(link);
+
+                }
+            });
+        }
+        else if(outputOpt == "文件输出"){
+
+        }
+        else{
+            alert("请先输入数据！");
+        }
+    }
+
     function editeDoc(docId) {
         location.href = '${ctx}/docOperation';
         window.localStorage.setItem('docId', docId);
@@ -1345,6 +1456,7 @@
             data:{"array": JSON.stringify(array), "type": type, "customize": customize},
             dataType: 'json',
             success: function (result) {
+                outputOpt = "表格输出";
                 var data = eval('('+result+')')['goal'];
                 showResultInChartContainer(data);
             }
@@ -1414,6 +1526,7 @@
             processData: false,		//用于对data参数进行序列化处理 这里必须false
             contentType: false,
             success:function(result){
+                outputOpt = "文件输出";
                 alert("文件上传成功！");
                 var data=eval('('+result+')');
                 var chaType=data[0]['chartType'];
