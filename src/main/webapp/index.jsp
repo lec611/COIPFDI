@@ -1,8 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -82,10 +77,6 @@
                     </li>
                     <li class="divider">
                     </li>
-                    <li>
-                        <a href="#" style="color:black;">上载申请处理</a>
-                    </li>
-                    <li class="divider">
                     </li>
                     <li>
                         <a href="#" style="color:black;">联系管理员</a>
@@ -360,10 +351,40 @@
     var userInfo = {};
     userInfo.id = "${user.id}";
     userInfo.name = "${user.name}";
+    var result="";//存储计算结果
     var data={};//存放后台返回的JSON数据
     var authEnum = ["游客可见", "注册用户可见", "VIP用户可见", "管理员可见"];
     var activeEnum = ["通过", "待审核", "未通过"];
     var outputOpt = "无输入";
+
+    //可行
+    $(function () {
+        $('#chartType').on('change',function () {
+            var chartType=null;
+            //图类型
+            var Obj5 = document.getElementById("chartType");
+            var index5 = Obj5.selectedIndex;
+            var chartType = Obj5.options[index5].value;
+
+            if(result==""||result==null){
+                alert("请先选择文件上传！");
+                return ;
+            }
+            if(chartType==0){
+                showBarChart(result);
+            }
+            else if(chartType==1) {
+                zhexianChart(result);
+            }
+            else if(chartType==2){
+                bingChart(result);
+            }
+            else if(chartType==3){
+                leidaChart(result);
+            }
+        })
+    })
+>>>>>>> Stashed changes
 
     // layui框架导航模块初始化，禁止删除
     var layer, element;
@@ -1504,10 +1525,6 @@
         var Obj4 = document.getElementById("type");
         var index4 = Obj4.selectedIndex;
         var text4 = Obj4.options[index4].text;
-        //图类型
-        var Obj5 = document.getElementById("chartType");
-        var index5 = Obj5.selectedIndex;
-        var value = Obj5.options[index5].value;
 
         var formData = new FormData();
         formData.append('file', $('#inputFile')[0].files[0]); // 固定格式
@@ -1515,7 +1532,6 @@
         formData.append('timeCount', text2);
         formData.append('typeCount', text3);
         formData.append('type', text4);
-        formData.append('chartType', value);
 
         $.ajax({
             url:'${ctx}/calculate/file',	//后台接收数据地址
@@ -1525,25 +1541,12 @@
             cache: false,			//上传文件无需缓存
             processData: false,		//用于对data参数进行序列化处理 这里必须false
             contentType: false,
-            success:function(result){
-                outputOpt = "文件输出";
+            success:function(resultD){
                 alert("文件上传成功！");
-                var data=eval('('+result+')');
-                var chaType=data[0]['chartType'];
-                if(chaType==0){
-                    showBarChart(result);
-                }
-                else if(chaType==1) {
-                    zhexianChart(result);
-                }
-                else if(chaType==2){
-                    bingChart(result);
-                }
-                else if(chaType==3){
-                    leidaChart(result);
-                }
+                result=resultD;
+                showBarChart(result);
             },
-            failure: function (data) {
+            failure: function(data) {
                 alert(data+"文件上传失败！");
             }
         })

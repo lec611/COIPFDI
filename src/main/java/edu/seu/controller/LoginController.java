@@ -76,8 +76,6 @@ public class LoginController {
             nameEmail = nameEmail.trim();
             String oldCodeCaptcha = (String) request.getSession().getAttribute("codeCaptcha");
             String ticket = userService.login(nameEmail, password, codeCaptcha, oldCodeCaptcha);
-            System.out.println("ticket"+ticket);
-            System.out.println(nameEmail+"/"+password);
             addCookie(nameEmail,ticket, response);
             HttpSession session=request.getSession(true);
             session.setMaxInactiveInterval(30);

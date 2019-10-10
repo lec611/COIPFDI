@@ -216,6 +216,7 @@ public class CalculatorController {
             for(int i=0;i<dataList.size();i++) {
                 goal = goal(dataList.get(i), weight);
                 JSONObject object = new JSONObject();
+                object.put("year",year);//增加年数，便于作柱状图
                 object.put("zoneNum","园区"+(i/year+1));
                 object.put("yearNum","第"+(i%year+1)+"年");
                 object.put("goal", new DecimalFormat("#.0000").format(goal));
@@ -227,6 +228,7 @@ public class CalculatorController {
             for(int i=0;i<dataList.size()-2*num;i++){
                 goal = goal(dataList.get(i),dataList.get(year*num+i/year));
                 JSONObject object = new JSONObject();
+                object.put("year",year);//增加年数，便于作柱状图
                 object.put("zoneNum","园区"+(i/year+1));
                 object.put("yearNum","第"+(i%year+1)+"年");
                 object.put("goal", new DecimalFormat("#.0000").format(goal));
