@@ -34,7 +34,7 @@
             crossorigin="anonymous"></script>
 
     <style type="text/css">
-        .layui-side .left-nav-index{
+        .layui-side .left-nav-index {
             fixwidth: true;
             width: 300px;
         }
@@ -64,7 +64,7 @@
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle">帮助</a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="#" style="color:black;">关于软件</a>
+                        <a href="javascript:aboutSoftware();" style="color:black;">关于软件</a>
                     </li>
                     <li class="divider">
                     </li>
@@ -78,7 +78,7 @@
                     <!-- <strong class="caret"></strong> --></a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="#" style="color:black;">参数预设</a>
+                        <a href="${ctx}/administrator.jsp" style="color:black;">参数预设</a>
                     </li>
                     <li class="divider">
                     </li>
@@ -91,12 +91,15 @@
         <ul class="layui-nav layui-layout-right head-nav-right">
             <div class="btn-group" style="margin-right:20px">
                 <button type="button" class="btn btn-default" id="loginButton"><a href="${ctx}/login">登录</a></button>
-                <button type="button" class="btn btn-default" id="registerButton"><a href="${ctx}/register">注册</a></button>
-                <label  class="btn" style="display:none" id="userInfoButton" href="${ctx}/userInfo.jsp"></label>
-                <label  class="btn" id="logoutButton" style="display: none;" onclick="logout();">退出登录</label>
+                <button type="button" class="btn btn-default" id="registerButton"><a href="${ctx}/register">注册</a>
+                </button>
+                <label class="btn" style="display:none" id="userInfoButton" href="${ctx}/userInfo.jsp"></label>
+                <label class="btn" id="logoutButton" style="display: none;" onclick="logout();">退出登录</label>
             </div>
             <li class="layui-nav-item">
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="calculation();" id="calculateBtn">运行计算</button>
+                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="calculation();"
+                        id="calculateBtn">运行计算
+                </button>
             </li>
         </ul>
 
@@ -187,7 +190,9 @@
                             <td>
                                 <div class="form-group">
                                     文件输入
-                                    <button type="button" class="btn btn-default" style="margin-left: 0px" onclick="fileCalculate()">确定</button>
+                                    <button type="button" class="btn btn-default" style="margin-left: 0px"
+                                            onclick="fileCalculate()">确定
+                                    </button>
                                     <br><input type="file" id="inputFile" class="form-control" name="inputFile">
                                 </div>
                             </td>
@@ -266,12 +271,14 @@
                         </tr>
                         <tr>
                             <td>文件输出
-                                <button type="button" class="btn btn-default" id="btnFileOutput" onclick="fileExcelOutput();">浏览</button>
-<%--                                <h2 class="layui-colla-title layui-btn-sm" style="background-color: #009688">浏览</h2>--%>
-<%--                                <div class="layui-colla-content">--%>
-<%--                                    <span class="layui-btn" data-status='1' onclick="filePDFOutput();">导出PDF</span>--%>
-<%--                                    <span class="layui-btn" data-status='0' onclick="fileExcelOutput();">导出Excel</span>--%>
-<%--                                </div>--%>
+                                <button type="button" class="btn btn-default" id="btnFileOutput"
+                                        onclick="fileExcelOutput();">浏览
+                                </button>
+                                <%--                                <h2 class="layui-colla-title layui-btn-sm" style="background-color: #009688">浏览</h2>--%>
+                                <%--                                <div class="layui-colla-content">--%>
+                                <%--                                    <span class="layui-btn" data-status='1' onclick="filePDFOutput();">导出PDF</span>--%>
+                                <%--                                    <span class="layui-btn" data-status='0' onclick="fileExcelOutput();">导出Excel</span>--%>
+                                <%--                                </div>--%>
                             </td>
                         </tr>
                         <tr>
@@ -323,40 +330,44 @@
     userInfo.id = "${user.id}";
     userInfo.name = "${user.name}";
     // alert(userInfo.name);
-    var result="";//存储计算结果
-    var data={};//存放后台返回的JSON数据
+    var result = "";//存储计算结果
+    var data = {};//存放后台返回的JSON数据
     var authEnum = ["游客可见", "注册用户可见", "VIP用户可见", "管理员可见"];
     var activeEnum = ["通过", "待审核", "未通过"];
     var outputOpt = "无输入";
 
     //可行
     $(function () {
-        $('#chartType').on('change',function () {
-            var chartType=null;
+        $('#chartType').on('change', function () {
+            var chartType = null;
             //图类型
             var Obj5 = document.getElementById("chartType");
             var index5 = Obj5.selectedIndex;
             var chartType = Obj5.options[index5].value;
 
-            if(result==""||result==null){
+            if (result == "" || result == null) {
                 alert("请先选择文件上传！");
-                return ;
+                return;
             }
-            if(chartType==0){
+            if (chartType == 0) {
                 showBarChart(result);
-            }
-            else if(chartType==1) {
+            } else if (chartType == 1) {
                 zhexianChart(result);
-            }
-            else if(chartType==2){
+            } else if (chartType == 2) {
                 bingChart(result);
-            }
-            else if(chartType==3){
+            } else if (chartType == 3) {
                 leidaChart(result);
             }
         })
     })
 
+    function aboutSoftware() {
+        alert("软件名称：Web中国境外产业园区融合化发展指数测度软件（简称 COIPFDI）\n" +
+            "软件版本号：V1.0\n" +
+            "开发机构：东南大学\n" +
+            "开发人员：王兴平、赵四东、张茜、王慧、张冬烨\n" +
+            "编程人员：戚晓芳、刘恩赐，徐成龙，喻学乐，贺黎，王建翔，吴长姣");
+    }
 
     // layui框架导航模块初始化，禁止删除
     var layer, element;
@@ -410,27 +421,24 @@
 
     // 显示用户信息
     function checkUserLogin() {
-        var name="<%=session.getAttribute("name")%>";
-        var ticket="<%=session.getAttribute("ticket")%>";
-        var user="<%=session.getAttribute("user")%>";
-        alert(userInfo.id);
+        var name = "<%=session.getAttribute("name")%>";
+        var ticket = "<%=session.getAttribute("ticket")%>";
         // alert(name);
         // alert(ticket);
 
-        if(name!=null&&ticket!=null&&name!="null"&&ticket!="null"){
-            document.getElementById('loginButton').style.display='none';
-            document.getElementById('registerButton').style.display='none';
-            document.getElementById('userInfoButton').style.display='block';
-            document.getElementById('logoutButton').style.display='block';
+        if (name != null && ticket != null && name != "null" && ticket != "null") {
+            document.getElementById('loginButton').style.display = 'none';
+            document.getElementById('registerButton').style.display = 'none';
+            document.getElementById('userInfoButton').style.display = 'block';
+            document.getElementById('logoutButton').style.display = 'block';
             var html = "";
             html = html + '<a href="${ctx}/userInfo.jsp;">欢迎' + name + '</a>';
             $("#userInfoButton").html(html);
-        }
-        else{
-            document.getElementById('loginButton').style.display='block';
-            document.getElementById('registerButton').style.display='block';
-            document.getElementById('userInfoButton').style.display='none';
-            document.getElementById('logoutButton').style.display='none';
+        } else {
+            document.getElementById('loginButton').style.display = 'block';
+            document.getElementById('registerButton').style.display = 'block';
+            document.getElementById('userInfoButton').style.display = 'none';
+            document.getElementById('logoutButton').style.display = 'none';
         }
     }
 
@@ -440,10 +448,10 @@
             type: "get",
             url: "${ctx}/reglogin/logout",
             success: function (data) {
-                document.getElementById('loginButton').style.display='block';
-                document.getElementById('registerButton').style.display='block';
-                document.getElementById('userInfoButton').style.display='none';
-                document.getElementById('logoutButton').style.display='none';
+                document.getElementById('loginButton').style.display = 'block';
+                document.getElementById('registerButton').style.display = 'block';
+                document.getElementById('userInfoButton').style.display = 'none';
+                document.getElementById('logoutButton').style.display = 'none';
                 if (data.code != 200) {
                     layer.msg(data.msg, {icon: 2});
                     return false;
@@ -838,19 +846,19 @@
             data: {"id_name_type": key},
             dataType: "json",
             success: function (data) {
-                if(data != '[]'){
-                    var objs=eval(data); // 解析JSON
-                    var count=1;
-                    for(var i=0;i<objs.length;i++) { // 循环对象
+                if (data != '[]') {
+                    var objs = eval(data); // 解析JSON
+                    var count = 1;
+                    for (var i = 0; i < objs.length; i++) { // 循环对象
                         var queryObj = objs[i];
                         var row = resultTable.insertRow(count++); // 插入一行rows是一个数组，索引从0开始
                         row.insertCell(0).innerHTML = "&nbsp;" + queryObj.id; // insertCell插入列，从0开始
                         row.insertCell(1).innerHTML = "&nbsp;" + queryObj.userName;
                         row.insertCell(2).innerHTML = "&nbsp;" + queryObj.type;
-                        var buttonHTML="<button class=\"layui-btn layui-btn-normal layui-btn-xs\" onclick=\"showResultInChartContainer("+queryObj.goal+");\" style=\"margin-top: 3px\">结果预览 </button>";
+                        var buttonHTML = "<button class=\"layui-btn layui-btn-normal layui-btn-xs\" onclick=\"showResultInChartContainer(" + queryObj.goal + ");\" style=\"margin-top: 3px\">结果预览 </button>";
                         row.insertCell(3).innerHTML = "&nbsp;" + buttonHTML;
                     }
-                }else{
+                } else {
                     alert("未查询到结果！");
                 }
             }
@@ -858,10 +866,9 @@
     }
 
     // 导出PDF文件
-    function filePDFOutput(){
+    function filePDFOutput() {
         var target = document.getElementsByClassName("blog-main");
-        html2canvas(target).then(function (canvas)
-            {
+        html2canvas(target).then(function (canvas) {
                 var contentWidth = canvas.width;
                 var contentHeight = canvas.height;
 
@@ -899,8 +906,8 @@
     }
 
     // 导出Excel文件
-    function fileExcelOutput(){
-        if(outputOpt == "表格输出"){
+    function fileExcelOutput() {
+        if (outputOpt == "表格输出") {
             var array = new Array(15);
             for (var i = 0; i < 7; i++) {
                 array[i] = document.getElementById(("data" + i).toString()).value;
@@ -919,7 +926,7 @@
             $.ajax({
                 type: 'post',
                 url: '${ctx}/calculate/outputTable',
-                data:{"array": JSON.stringify(array), "type": type, "customize": customize},
+                data: {"array": JSON.stringify(array), "type": type, "customize": customize},
                 responseType: 'blob',
                 success: function (res) {
 
@@ -968,11 +975,9 @@
 
                 }
             });
-        }
-        else if(outputOpt == "文件输出"){
+        } else if (outputOpt == "文件输出") {
 
-        }
-        else{
+        } else {
             alert("请先输入数据！");
         }
     }
@@ -1021,7 +1026,7 @@
 
     function bingChart(result) {
 
-        var data = eval('('+result+')');
+        var data = eval('(' + result + ')');
 
         // 路径配置
         require.config({
@@ -1042,7 +1047,7 @@
 
                 var str = "[";
                 for (var i = 0; i < data.length; i++) {
-                    var temp = "{value: " + data[i]['goal'] + ", name: '" + data[i]['zoneNum'] +'第'+data[i]['yearNum']+'年'+data[i]['goal']+ "'},";
+                    var temp = "{value: " + data[i]['goal'] + ", name: '" + data[i]['zoneNum'] + '第' + data[i]['yearNum'] + '年' + data[i]['goal'] + "'},";
                     str += temp;
                 }
                 str += "]";
@@ -1073,8 +1078,8 @@
     }
 
     function zhexianChart(result) {
-        var data = eval('('+result+')');
-        var year=data[0]['year'];
+        var data = eval('(' + result + ')');
+        var year = data[0]['year'];
 
         // 路径配置
         require.config({
@@ -1093,10 +1098,10 @@
                 // 基于准备好的dom，初始化echarts图表
                 var myChart = ec.init(document.getElementById('chartContainer'));
 
-                var str="[";//结果
-                var strX="";//横坐标
+                var str = "[";//结果
+                var strX = "";//横坐标
                 // var legendStr="{data:[";//折线代表名称
-                var legendData=[];
+                var legendData = [];
                 // for(var i=0;i<year-1;i++)
                 // {
                 //     // legendData[i]=data[year*i]['zoneNum'];
@@ -1106,21 +1111,18 @@
                 // legendData[i]=data[year*i]['zoneNum'];
                 // legendStr+=legendData+"],},";
                 // alert(legendStr);
-                for(var i=0;i<year-1;i++)
-                {
-                    strX+=data[i]['yearNum'];
+                for (var i = 0; i < year - 1; i++) {
+                    strX += data[i]['yearNum'];
                 }
-                strX+=data[i]['yearNum'];
-                for(var i=0;i<(data.length/year);i++)
-                {
-                    var arr=[];
-                    for(var j=0;j<year;j++)
-                    {
-                        arr[j]=parseInt(data[i+j]['goal']);
+                strX += data[i]['yearNum'];
+                for (var i = 0; i < (data.length / year); i++) {
+                    var arr = [];
+                    for (var j = 0; j < year; j++) {
+                        arr[j] = parseInt(data[i + j]['goal']);
                     }
-                    str+="{name:'"+data[i]['zoneNum']+"',type:'line',data:["+arr+"]},";
+                    str += "{name:'" + data[i]['zoneNum'] + "',type:'line',data:[" + arr + "]},";
                 }
-                str+="]";
+                str += "]";
                 option = {
                     calculable: true,
                     // legend:legendStr,
@@ -1132,7 +1134,7 @@
                             type: 'category',
                             boundaryGap: false,
                             data: strX
-                                // ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                            // ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
                         }
                     ],
                     yAxis: [
@@ -1143,7 +1145,7 @@
                             // }
                         }
                     ],
-                    series:eval(str)
+                    series: eval(str)
                     //     [
                     //     {
                     //         name: '最高气温',
@@ -1172,7 +1174,7 @@
 
     function leidaChart(result) {
 
-        var data = eval('('+result+')');
+        var data = eval('(' + result + ')');
 
         // 路径配置
         require.config({
@@ -1193,14 +1195,14 @@
 
                 var str = "[";
                 for (var i = 0; i < data.length; i++) {
-                    var temp = "{text: '" + data[i]['zoneNum'] +'第'+data[i]['yearNum']+ "年', max: 100},";
+                    var temp = "{text: '" + data[i]['zoneNum'] + '第' + data[i]['yearNum'] + "年', max: 100},";
                     str += temp;
                 }
                 str += "]";
 
                 var str1 = "[{value: [";
                 for (var i = 0; i < data.length; i++) {
-                    str1 += data[i]['goal']+",";
+                    str1 += data[i]['goal'] + ",";
                 }
                 str1 += "],},]";
 
@@ -1222,11 +1224,11 @@
                             name: '预算 vs 开销（Budget vs spending）',
                             type: 'radar',
                             data: eval(str1)
-                                // [{value: [4300, 10000, 28000, 35000, 50000, 19000], name: '预算分配（Allocated Budget）'},
-                                // {
-                                //     value: [5000, 14000, 28000, 31000, 42000, 21000],
-                                //     name: '实际开销（Actual Spending）'
-                                // }
+                            // [{value: [4300, 10000, 28000, 35000, 50000, 19000], name: '预算分配（Allocated Budget）'},
+                            // {
+                            //     value: [5000, 14000, 28000, 31000, 42000, 21000],
+                            //     name: '实际开销（Actual Spending）'
+                            // }
                             // ]
                         }
                     ]
@@ -1238,24 +1240,22 @@
     }
 
     function showBarChart(result) {//柱状图
-        alert(result);
-        var data = eval('('+result+')');
-        var year=data[0]['year'];
-        alert(year);
+        var data = eval('(' + result + ')');
+        var year = data[0]['year'];
         charData = [];
         for (var i = 0; i < data.length; i++) {
             var column = {
                 type: "column",
-                name: data[i]['zoneNum'] +'第'+ data[i]['yearNum'] + '年的数据',
+                name: data[i]['zoneNum'] + '第' + data[i]['yearNum'] + '年的数据',
                 legendText: "" + data[i]['zoneNum'],
                 showInLegend: true,
                 dataPoints: [
-                    {label: ""+data[i]['zoneNum']+"第"+data[i]['yearNum']+"年", y: parseInt(data[i]['goal'])},
+                    {label: "" + data[i]['zoneNum'] + "第" + data[i]['yearNum'] + "年", y: parseInt(data[i]['goal'])},
                     // {label: ""+data[i]['zoneNum']+data[i]['yearNum'], y: 10},
                 ]
             };
             charData.push(column);
-            if ((i+1)%year==0){
+            if ((i + 1) % year == 0) {
                 var column = {
                     type: "column",
                     showInLegend: false,
@@ -1292,28 +1292,28 @@
     }
 
     function showLineChart(result) {
-        var data=eval('('+result+')');
-        var year=data[0]['year'];
+        var data = eval('(' + result + ')');
+        var year = data[0]['year'];
 
         charData = [];
         risk = ["政治风险", "经济风险", "社会风险", "综合风险"];
         var title_text;
         // if (type == 0) {
         //     title_text = data['country'];
-            for (var i = 0; i < data.length; i+=3) {
-                dataPts = [];
-                for (var j = i; j < (i+year); j++) {
-                    var pts = {x: new Date(data[i]['yearNum'], 0, 0), y: data[i]['goal']};
-                    dataPts.push(pts);
-                }
-                var line = {
-                    type: "line",
-                    name: risk[i],
-                    showInLegend: true,
-                    dataPoints: dataPts
-                };
-                charData.push(line);
+        for (var i = 0; i < data.length; i += 3) {
+            dataPts = [];
+            for (var j = i; j < (i + year); j++) {
+                var pts = {x: new Date(data[i]['yearNum'], 0, 0), y: data[i]['goal']};
+                dataPts.push(pts);
             }
+            var line = {
+                type: "line",
+                name: risk[i],
+                showInLegend: true,
+                dataPoints: dataPts
+            };
+            charData.push(line);
+        }
         // } else if (type == 1) {
         //     for (var i = 0; i < data.length; i++) {
         //         var str="[";
@@ -1373,10 +1373,9 @@
         for (var i = 0; i < 7; i++) {
             array[i] = document.getElementById(("data" + i).toString()).value;
         }
-        alert(array[0]);
-        if(result!=null&&array[0]==""){
+        if (result != null && array[0] == "") {
             showBarChart(result);
-            return ;
+            return;
         }
         for (var i = 0; i < 7; i++) {
             array[7 + i] = document.getElementById(("weight" + i).toString()).value;
@@ -1391,11 +1390,11 @@
         $.ajax({
             type: 'post',
             url: '${ctx}/calculate/table',
-            data:{"array": JSON.stringify(array), "type": type, "customize": customize},
+            data: {"array": JSON.stringify(array), "type": type, "customize": customize},
             dataType: 'json',
             success: function (result) {
                 outputOpt = "表格输出";
-                var data = eval('('+result+')')['goal'];
+                var data = eval('(' + result + ')')['goal'];
                 showResultInChartContainer(data);
             }
         });
@@ -1403,26 +1402,22 @@
 
     function showResultInChartContainer(data) {
         let str;
-        if(data<20){
-            str="很低";
-        }
-        else if(data>=20&&data<40){
-            str="较低";
-        }
-        else if(data>=40&&data<60){
-            str="一般";
-        }
-        else if(data>=60&&data<80){
-            str="较高";
-        }
-        else if(data>=80){
-            str="很高";
+        if (data < 20) {
+            str = "很低";
+        } else if (data >= 20 && data < 40) {
+            str = "较低";
+        } else if (data >= 40 && data < 60) {
+            str = "一般";
+        } else if (data >= 60 && data < 80) {
+            str = "较高";
+        } else if (data >= 80) {
+            str = "很高";
         }
         const container = document.getElementById("chartContainer");
-        container.innerText = "融合化发展指数\n"+data+"\n融合化发展水平"+str;
+        container.innerText = "融合化发展指数\n" + data + "\n融合化发展水平" + str;
         container.style.fontSize = '30px';
         container.style.textAlign = 'center';
-        container.style.marginTop='130px';
+        container.style.marginTop = '130px';
     }
 
     function fileCalculate() {
@@ -1456,21 +1451,21 @@
         formData.append('chartType', value);
 
         $.ajax({
-            url:'${ctx}/calculate/file',	//后台接收数据地址
-            data:formData,
+            url: '${ctx}/calculate/file',	//后台接收数据地址
+            data: formData,
             type: "POST",
             dataType: "json",
             cache: false,			//上传文件无需缓存
             processData: false,		//用于对data参数进行序列化处理 这里必须false
             contentType: false,
-            success:function(resultD){
+            success: function (resultD) {
                 outputOpt = "文件输出";
                 alert("文件上传成功！");
-                result=resultD;
+                result = resultD;
                 // showBarChart(result);
             },
             failure: function (data) {
-                alert(data+"文件上传失败！");
+                alert(data + "文件上传失败！");
             }
         })
     }

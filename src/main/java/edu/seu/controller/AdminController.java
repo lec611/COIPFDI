@@ -3,8 +3,6 @@ package edu.seu.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import edu.seu.base.CodeEnum;
-import edu.seu.base.CommonResponse;
 import edu.seu.model.Weight;
 import edu.seu.service.WeightService;
 import edu.seu.util.ImportExcel;
@@ -29,7 +27,7 @@ import java.util.List;
 public class AdminController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
-    public String[] str = {"经贸合作区","工业园","科技园","资源园","物流园/商贸园","农业园","其他园区"};
+    private String[] str = {"经贸合作区","工业园","科技园","资源园","物流园/商贸园","农业园","其他园区"};
 
     @Autowired
     WeightService weightService;
@@ -43,7 +41,7 @@ public class AdminController {
         JSONArray array = new JSONArray();
         for(int i = 0;i < 14;i++){
             Weight weight;
-            if(i/2 == 0){
+            if(i%2 == 0){
                 //查询权重信息
                 weight = weightService.queryWeightByType(str[i/2]);
             }
@@ -70,7 +68,7 @@ public class AdminController {
      */
     @ResponseBody
     @RequestMapping("/updateWS")
-    public void updateWS(MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+    public String updateWS(MultipartFile file,HttpServletRequest request, HttpServletResponse response){
 
         try{
             ImportExcel importExcel = new ImportExcel();
@@ -80,7 +78,7 @@ public class AdminController {
             if (dataList == null) {
                 LOGGER.error("管理员输入的文件为空！");
             }
-            Weight weight = new Weight();
+            Weight weight;
             for(int i = 0;i < dataList.size()-1;i += 2){
                 //更新权重信息
                 weight = dataList.get(i);
@@ -91,34 +89,11 @@ public class AdminController {
                 weight.setType(str[i/2]);
                 weightService.updateStandard(weight);
             }
+            return JSON.toJSONString("");
 
         }catch(Exception e){
             LOGGER.error(e.getMessage());
-            e.printStackTrace();
+            return JSON.toJSONString(e.getMessage());
         }
     }
-
 }
-/*
-<!--加载页面时展示初始权重和标准信息-->
-        $(function () {
-        $.ajax({
-        type: 'post',
-        url: '${ctx}/admin/showWS',
-        dataType: 'json',
-        success: function (result) {
-        var data = eval('('+result+')');
-        showWeightAndStandard(data);
-        }
-        });
-        });
-
-<!--展示数据-->
-        function showWeightAndStandard(data){
-        var array = new Array(2*7*7);
-        for (var i = 0; i < 2*7*7; i++) {
-        array[i] = document.getElementById(("weight" + i).toString()).value;
-        }
-
-        }
-*/

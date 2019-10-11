@@ -88,20 +88,20 @@
     <div class="blog-main">
         <div style="margin-left: 20px;margin-right: 50px;" id="parameterDiv">
             <table class="table table-hover table-bordered" style="text-align:center;margin:20px;">
-<%--                <tr><td rowspan="2"><table><div class="bias2"><tr><td width="60%"></td><td >园区类型</td></tr><tr><td></td><td></td></tr><tr><td>指标</td><td></td></tr></div></table></td><td colspan="2">经贸合作区</td><td colspan="2">工业园</td><td colspan="2">科技园</td><td colspan="2">资源园</td><td colspan="2">物流园/商业园</td><td colspan="2">农业园</td><td colspan="2">其他园区</td></tr>--%>
+                <%--    <tr><td rowspan="2"><table><div class="bias2"><tr><td width="60%"></td><td >园区类型</td></tr><tr><td></td><td></td></tr><tr><td>指标</td><td></td></tr></div></table></td><td colspan="2">经贸合作区</td><td colspan="2">工业园</td><td colspan="2">科技园</td><td colspan="2">资源园</td><td colspan="2">物流园/商业园</td><td colspan="2">农业园</td><td colspan="2">其他园区</td></tr>--%>
                 <tr><td rowspan="2" style="padding: 0px" width="180px;"><img src="static/images/table1.png"></td><td colspan="2">经贸合作区</td><td colspan="2">工业园</td><td colspan="2">科技园</td><td colspan="2">资源园</td><td colspan="2">物流园/商业园</td><td colspan="2">农业园</td><td colspan="2">其他园区</td></tr>
                 <tr><td>权重</td><td>标准</td><td>权重</td><td>标准</td><td>权重</td><td>标准</td><td>权重</td><td>标准</td><td>权重</td><td>标准</td><td>权重</td><td>标准</td><td>权重</td><td>标准</td></tr>
-                <tr><td>产业融合度</td><td id="industry0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>市场融合度</td><td id="market0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>技术融合度</td><td id="technology0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>人员融合度</td><td id="hr0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>政策依赖度</td><td id="policy0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>资本依赖度</td><td id="capital0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>社会文化影响度</td><td id="culture0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>产业融合度</td><td id="industry0"></td><td id="industry1"></td><td id="industry2"></td><td id="industry3"></td><td id="industry4"></td><td id="industry5"></td><td id="industry6"></td><td id="industry7"></td><td id="industry8"></td><td id="industry9"></td><td id="industry10"></td><td id="industry11"></td><td id="industry12"></td><td id="industry13"></td></tr>
+                <tr><td>市场融合度</td><td id="market0"></td><td id="market1"></td><td id="market2"></td><td id="market3"></td><td id="market4"></td><td id="market5"></td><td id="market6"></td><td id="market7"></td><td id="market8"></td><td id="market9"></td><td id="market10"></td><td id="market11"></td><td id="market12"></td><td id="market13"></td></tr>
+                <tr><td>技术融合度</td><td id="technology0"></td><td id="technology1"></td><td id="technology2"></td><td id="technology3"></td><td id="technology4"></td><td id="technology5"></td><td id="technology6"></td><td id="technology7"></td><td id="technology8"></td><td id="technology9"></td><td id="technology10"></td><td id="technology11"></td><td id="technology12"></td><td id="technology13"></td></tr>
+                <tr><td>人员融合度</td><td id="hr0"></td><td id="hr1"></td><td id="hr2"></td><td id="hr3"></td><td id="hr4"></td><td id="hr5"></td><td id="hr6"></td><td id="hr7"></td><td id="hr8"></td><td id="hr9"></td><td id="hr10"></td><td id="hr11"></td><td id="hr12"></td><td id="hr13"></td></tr>
+                <tr><td>政策依赖度</td><td id="policy0"></td><td id="policy1"></td><td id="policy2"></td><td id="policy3"></td><td id="policy4"></td><td id="policy5"></td><td id="policy6"></td><td id="policy7"></td><td id="policy8"></td><td id="policy9"></td><td id="policy10"></td><td id="policy11"></td><td id="policy12"></td><td id="policy13"></td></tr>
+                <tr><td>资本依赖度</td><td id="capital0"></td><td id="capital1"></td><td id="capital2"></td><td id="capital3"></td><td id="capital4"></td><td id="capital5"></td><td id="capital6"></td><td id="capital7"></td><td id="capital8"></td><td id="capital9"></td><td id="capital10"></td><td id="capital11"></td><td id="capital12"></td><td id="capital13"></td></tr>
+                <tr><td>社会文化影响度</td><td id="culture0"></td><td id="culture1"></td><td id="culture2"></td><td id="culture3"></td><td id="culture4"></td><td id="culture5"></td><td id="culture6"></td><td id="culture7"></td><td id="culture8"></td><td id="culture9"></td><td id="culture10"></td><td id="culture11"></td><td id="culture12"></td><td id="culture13"></td></tr>
             </table>
             <div style="text-align: center;margin: 60px;position: relative">
                 <input type="file" id="inputFile" class="form-control" name="inputFile" style="width: 80%;float: left">
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="" style="float: left">上传文件 </button>
+                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="updateData()" id="" style="float: left">上传文件 </button>
             </div>
         </div>
     </div>
@@ -119,15 +119,50 @@
             cache: false,			//上传文件无需缓存
             processData: false,		//用于对data参数进行序列化处理 这里必须false
             contentType: false,
-            success:function(resultD){
-                alert(resultD);
-                var data=eval('('+resultD+')');
-                document.getElementById('capital0').innerText=data[0]['capital'];
+            success:function(result){
+                var data=eval('('+result+')');
+
+                var j=0;
+                for(var i=0;i<14;i++){
+                    document.getElementById('industry'+j).innerText=data[i]['industry'];
+                    document.getElementById('market'+j).innerText=data[i]['market'];
+                    document.getElementById('technology'+j).innerText=data[i]['technology'];
+                    document.getElementById('hr'+j).innerText=data[i]['hr'];
+                    document.getElementById('policy'+j).innerText=data[i]['policy'];
+                    document.getElementById('capital'+j).innerText=data[i]['capital'];
+                    document.getElementById('culture'+j).innerText=data[i]['culture'];
+                    j++;
+                }
             },
             failure: function (data) {
-                alert(data+"获取数据失败！");
+                alert(data+"文件上传失败！");
             }
         })
     })
+
+    //更新数据
+    function updateData(){
+        var formData = new FormData();
+        formData.append('file', $('#inputFile')[0].files[0]); // 固定格式
+
+        $.ajax({
+            url:'${ctx}/admin/updateWS',	//后台接收数据地址
+            data:formData,
+            type: "POST",
+            dataType: "json",
+            cache: false,			//上传文件无需缓存
+            processData: false,		//用于对data参数进行序列化处理 这里必须false
+            contentType: false,
+            success: function(result){
+                alert("默认数据修改成功！");
+                //刷新界面
+                history.go(0);
+            },
+            failure: function (data) {
+                alert(data+"文件上传失败！");
+            }
+        })
+    }
+
 </script>
 </html>

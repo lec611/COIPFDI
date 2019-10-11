@@ -93,12 +93,14 @@ public class ImportExcel {
     public List<Weight> read(String fileName, MultipartFile Mfile) {
 
         //把spring文件上传的MultipartFile转换成CommonsMultipartFile类型
-        CommonsMultipartFile cf = (CommonsMultipartFile) Mfile; //获取本地存储路径
-        File file = new File("D:\\fileupload");
+        CommonsMultipartFile cf = (CommonsMultipartFile) Mfile;
+        File file = new File("F:\\fileupload");
         //创建一个目录 （它的路径名由当前 File对象指定，包括任一必须的父路径。）
-        if (!file.exists()) file.mkdirs();
+        if (!file.exists()) {
+            file.mkdirs();
+        }
         //新建一个文件
-        File file1 = new File("D:\\fileupload\\" + new Date().getTime() + ".xlsx");
+        File file1 = new File("F:\\fileupload\\" + System.currentTimeMillis() + ".xlsx");
         //将上传的文件写入新建的文件中
         try {
             cf.getFileItem().write(file1);
@@ -141,6 +143,7 @@ public class ImportExcel {
                 }
             }
         }
+        file1.delete();
         return dataList;
     }
 
@@ -179,7 +182,6 @@ public class ImportExcel {
      */
     private List<Weight> read(Workbook wb) {
         List<Weight> dataList = new ArrayList<>();
-        Weight weight;
         //得到第一个shell
         Sheet sheet = wb.getSheetAt(0);
         //得到Excel的行数
@@ -189,29 +191,45 @@ public class ImportExcel {
             this.totalCells = sheet.getRow(0).getPhysicalNumberOfCells();
         }
 
+        //用户文件上传
+        if(this.getTotalRows() == 7) {
+            dataList = dataListGenerator(sheet,0,0);
+        }
+        //管理员文件上传(修改权重及标准)
+        else{
+            dataList = dataListGenerator(sheet,1,2);
+        }
+        return dataList;
+    }
+
+    public List<Weight> dataListGenerator(Sheet sheet,int cellStart,int rowStart){
+        List<Weight> dataList = new ArrayList<>();
+        Weight weight;
+
         //循环Excel的列
-        for (int c = 0; c < this.getTotalCells(); c++) {
+        for (int c = cellStart; c < this.getTotalCells(); c++) {
             weight = new Weight();
             //循环Excel的行
-            for (int r = 0; r < this.getTotalRows();r++) {
+            for (int r = rowStart; r < this.getTotalRows(); r++) {
                 Row row = sheet.getRow(r);
-                if(row == null) continue;
-
+                if (row == null) {
+                    continue;
+                }
                 Cell cell = row.getCell(c);
                 if (null != cell) {
-                    if (r == 0) {
+                    if (r == rowStart) {
                         weight.setIndustry(cell.getNumericCellValue());
-                    } else if (r == 1) {
+                    } else if (r == rowStart+1) {
                         weight.setMarket(cell.getNumericCellValue());
-                    } else if (r == 2) {
+                    } else if (r == rowStart+2) {
                         weight.setTechnology(cell.getNumericCellValue());
-                    } else if (r == 3) {
+                    } else if (r == rowStart+3) {
                         weight.setHr(cell.getNumericCellValue());
-                    } else if (r == 4) {
+                    } else if (r == rowStart+4) {
                         weight.setPolicy(cell.getNumericCellValue());
-                    } else if (r == 5) {
+                    } else if (r == rowStart+5) {
                         weight.setCapital(cell.getNumericCellValue());
-                    } else if (r == 6) {
+                    } else if (r == rowStart+6) {
                         weight.setCulture(cell.getNumericCellValue());
                     }
                 }
