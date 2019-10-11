@@ -29,6 +29,18 @@ public class UserService {
     @Autowired
     private HostHolder hostHolder;
 
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    private User currentUser;
+
+
+
     public String register(User user, String oldEmail, String codeCaptcha, String emailCaptcha,
                            String oldCodeCaptcha, String oldEmailCaptcha) throws COIPFDIExceptions {
         checkBeforeRegister(user, oldEmail, codeCaptcha, emailCaptcha, oldCodeCaptcha, oldEmailCaptcha);
@@ -51,6 +63,7 @@ public class UserService {
         if (!StringUtils.equals(old.getPassword(), password)) {
             throw new COIPFDIExceptions(CodeEnum.USER_ERROR, "密码错误！");
         }
+        setCurrentUser(old);
         return addLoginTicket(old.getId());
     }
 
@@ -122,6 +135,7 @@ public class UserService {
 
     public void logout(String ticket) {
         loginTicketDAO.updateStatus(ticket,1);
+        setCurrentUser(null);
     }
 
 

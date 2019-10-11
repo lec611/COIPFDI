@@ -69,7 +69,7 @@
                     <li class="divider">
                     </li>
                     <li>
-                        <a href="#" style="color:black;">使用说明</a>
+                        <a href="${ctx}/guide.jsp" style="color:black;">使用说明</a>
                     </li>
                 </ul>
             </li>

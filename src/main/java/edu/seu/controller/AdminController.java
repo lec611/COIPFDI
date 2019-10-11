@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import edu.seu.model.Weight;
+import edu.seu.service.UserService;
 import edu.seu.service.WeightService;
 import edu.seu.util.ImportExcel;
 import org.slf4j.Logger;
@@ -32,12 +33,18 @@ public class AdminController {
     @Autowired
     WeightService weightService;
 
+    @Autowired
+    UserService userService;
+
+
+
     /**
      * 展示数据库中现存的权重和标准信息
      */
     @ResponseBody
     @RequestMapping("/showWS")
     public String showWS(){
+        System.out.println(userService.getCurrentUser());
         JSONArray array = new JSONArray();
         for(int i = 0;i < 14;i++){
             Weight weight;
