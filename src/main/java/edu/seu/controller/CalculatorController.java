@@ -30,11 +30,15 @@ import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.*;
 
+/**
+ * @author wjx
+ * @date 2019/10/11
+ */
 @RequestMapping("/calculate")
 @Controller
 public class CalculatorController {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(CalculatorController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CalculatorController.class);
 
     @Autowired
     WeightService weightService;

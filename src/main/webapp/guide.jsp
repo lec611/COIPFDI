@@ -105,30 +105,4 @@
 </div>
 
 </body>
-<script>
-    //上传说明文件
-    function uploadGuide(){
-        var formData = new FormData();
-        formData.append('file', $('#inputFile')[0].files[0]); // 固定格式
-
-        $.ajax({
-            url:'${ctx}/guideFile/upload',	//后台接收数据地址
-            data:formData,
-            type: "POST",
-            dataType: "json",
-            cache: false,			//上传文件无需缓存
-            processData: false,		//用于对data参数进行序列化处理 这里必须false
-            contentType: false,
-            success: function(result){
-                alert("默认数据修改成功！");
-                //刷新界面
-                history.go(0);
-            },
-            failure: function (data) {
-                alert(data+"文件上传失败！");
-            }
-        })
-    }
-
-</script>
 </html>

@@ -154,12 +154,18 @@
             processData: false,		//用于对data参数进行序列化处理 这里必须false
             contentType: false,
             success: function(result){
-                alert("默认数据修改成功！");
-                //刷新界面
-                history.go(0);
+                if(result === "success"){
+                    alert("默认数据修改成功！");
+                    //刷新界面
+                    history.go(0);
+                }else if(result === "error"){
+                    alert("非管理员用户无修改权限！");
+                }else if(result === "empty file"){
+                    alert("管理员输入的文件为空！");
+                }
             },
             failure: function (data) {
-                alert(data+"文件上传失败！");
+                alert(data+"\n文件传输出错！");
             }
         })
     }
