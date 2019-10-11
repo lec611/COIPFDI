@@ -93,15 +93,41 @@
         </div>
         <br><br><br>
         <div style="text-align: center">
-            <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="updateData()" id="1" style="">上传说明文件</button>
-            <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="download()" id="2" style="">下载说明文件</button>
+            <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="uploadGuideFile()" id="1" style="">上传说明文件</button>
+            <button class="layui-btn" lay-submit="" lay-filter="formSearch" id="2" style=""><a href="${ctx}/guideFile/download">下载说明文件</button>
         </div>
     </div>
 </div>
 
 </body>
+<script>
+    //上传说明文件(需管理员权限且只能是PDF文件)
+    function uploadGuideFile(){
+        var formData = new FormData();
+        formData.append('file', $('#inputFile')[0].files[0]); // 固定格式
 
+        $.ajax({
+            url:'${ctx}/guideFile/upload',	//后台接收数据地址
+            data:formData,
+            type: "POST",
+            dataType: "json",
+            cache: false,			//上传文件无需缓存
+            processData: false,		//用于对data参数进行序列化处理 这里必须false
+            contentType: false,
+            success: function(result){
+                if(result === "success"){
+                    alert("说明文件上传成功！");
+                }else if(result === "error"){
+                    alert("非管理员用户无上传权限！");
+                }else{
+                    alert("注意：上传文件格式必须为PDF！");
+                }
+            },
+            failure: function (data) {
+                alert(data+"\n文件传输出错！");
+            }
+        })
+    }
 
-
-
+</script>
 </html>
