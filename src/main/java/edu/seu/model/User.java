@@ -16,7 +16,8 @@ public class User {
     private String sex;
     private String company;
     private String address;
-    private String domain;      //工作领域
+    private String domain;
+    private Integer isAdmin;
 
     public User() {
 

@@ -3,6 +3,9 @@ package edu.seu.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import edu.seu.base.CodeEnum;
+import edu.seu.exceptions.COIPFDIExceptions;
+import edu.seu.model.User;
 import edu.seu.model.Weight;
 import edu.seu.service.UserService;
 import edu.seu.service.WeightService;
@@ -31,20 +34,16 @@ public class AdminController {
     private String[] str = {"经贸合作区","工业园","科技园","资源园","物流园/商贸园","农业园","其他园区"};
 
     @Autowired
-    WeightService weightService;
+    private WeightService weightService;
 
     @Autowired
-    UserService userService;
-
-
-
+    private UserService userService;
     /**
      * 展示数据库中现存的权重和标准信息
      */
     @ResponseBody
     @RequestMapping("/showWS")
     public String showWS(){
-        System.out.println(userService.getCurrentUser());
         JSONArray array = new JSONArray();
         for(int i = 0;i < 14;i++){
             Weight weight;
@@ -69,6 +68,15 @@ public class AdminController {
         return JSON.toJSONString(array.toString());
     }
 
+    /**
+     * 是否管理员登录
+     */
+    public void adminAuth() throws COIPFDIExceptions {
+        User user = userService.getCurrentUser();
+        if (user == null || user.getIsAdmin() != 1) {
+            throw new COIPFDIExceptions(CodeEnum.USER_ERROR, "此操作需要管理员权限！");
+        }
+    }
 
     /**
      * 更新数据库中的权重和标准信息(Excel文件输入)
@@ -78,12 +86,16 @@ public class AdminController {
     public String updateWS(MultipartFile file,HttpServletRequest request, HttpServletResponse response){
 
         try{
+            //判断是否有管理员权限
+            adminAuth();
+
             ImportExcel importExcel = new ImportExcel();
             List<Weight> dataList = importExcel.read(file.getOriginalFilename(),file);
 
             //错误判断
             if (dataList == null) {
                 LOGGER.error("管理员输入的文件为空！");
+                return JSON.toJSONString("empty file");
             }
             Weight weight;
             for(int i = 0;i < dataList.size()-1;i += 2){
@@ -96,11 +108,11 @@ public class AdminController {
                 weight.setType(str[i/2]);
                 weightService.updateStandard(weight);
             }
-            return JSON.toJSONString("");
+            return JSON.toJSONString("success");
 
         }catch(Exception e){
             LOGGER.error(e.getMessage());
-            return JSON.toJSONString(e.getMessage());
+            return JSON.toJSONString("error");
         }
     }
 }
