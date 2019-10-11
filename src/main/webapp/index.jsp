@@ -1047,7 +1047,7 @@
 
                 var str = "[";
                 for (var i = 0; i < data.length; i++) {
-                    var temp = "{value: " + data[i]['goal'] + ", name: '" + data[i]['zoneNum'] + '第' + data[i]['yearNum'] + '年' + data[i]['goal'] + "'},";
+                    var temp = "{value: " + data[i]['goal'] + ", name: '" + data[i]['zoneNum'] + '' + data[i]['yearNum'] + '' + data[i]['goal'] + "'},";
                     str += temp;
                 }
                 str += "]";
@@ -1195,7 +1195,7 @@
 
                 var str = "[";
                 for (var i = 0; i < data.length; i++) {
-                    var temp = "{text: '" + data[i]['zoneNum'] + '第' + data[i]['yearNum'] + "年', max: 100},";
+                    var temp = "{text: '" + data[i]['zoneNum'] + data[i]['yearNum'] + "', max: 100},";
                     str += temp;
                 }
                 str += "]";
@@ -1246,11 +1246,11 @@
         for (var i = 0; i < data.length; i++) {
             var column = {
                 type: "column",
-                name: data[i]['zoneNum'] + '第' + data[i]['yearNum'] + '年的数据',
+                name: data[i]['zoneNum'] + '' + data[i]['yearNum'] + '的数据',
                 legendText: "" + data[i]['zoneNum'],
                 showInLegend: true,
                 dataPoints: [
-                    {label: "" + data[i]['zoneNum'] + "第" + data[i]['yearNum'] + "年", y: parseInt(data[i]['goal'])},
+                    {label: " ", y: parseInt(data[i]['goal'])},
                     // {label: ""+data[i]['zoneNum']+data[i]['yearNum'], y: 10},
                 ]
             };
@@ -1291,81 +1291,81 @@
         }
     }
 
-    function showLineChart(result) {
-        var data = eval('(' + result + ')');
-        var year = data[0]['year'];
-
-        charData = [];
-        risk = ["政治风险", "经济风险", "社会风险", "综合风险"];
-        var title_text;
-        // if (type == 0) {
-        //     title_text = data['country'];
-        for (var i = 0; i < data.length; i += 3) {
-            dataPts = [];
-            for (var j = i; j < (i + year); j++) {
-                var pts = {x: new Date(data[i]['yearNum'], 0, 0), y: data[i]['goal']};
-                dataPts.push(pts);
-            }
-            var line = {
-                type: "line",
-                name: risk[i],
-                showInLegend: true,
-                dataPoints: dataPts
-            };
-            charData.push(line);
-        }
-        // } else if (type == 1) {
-        //     for (var i = 0; i < data.length; i++) {
-        //         var str="[";
-        //         for(var j=0;j<year;j++)
-        //         {
-        //             str+="{label: "+data[j]['zoneNum']+", y: "+parseInt(data[j]['goal'])+"},";
-        //         }
-        //         str+="]";
-        //         // dataPts = [];
-        //         var column = {
-        //             type: "column",
-        //             name: data['zoneNum'][i] + data['yearNum'] + '年的数据',
-        //             legendText: "" + data['zoneNum'][i],
-        //             showInLegend: true,
-        //             dataPoints: str
-        //                 // [
-        //                 // {label: "经济风险", y: data['data'][i][1]},
-        //                 // {label: "社会风险", y: data['data'][i][2]},
-        //                 // {label: "综合风险", y: data['data'][i][3]},
-        //             // ]
-        //         };
-        //         charData.push(column);
-        //     }
-        // }
-
-        var chart = new CanvasJS.Chart("chartContainer", {
-            // title: {
-            //     text: data['country']
-            // },
-            axisX: {
-                valueFormatString: "YYYY"
-            },
-            toolTip: {
-                shared: true
-            },
-            legend: {
-                cursor: "pointer",
-                itemclick: toggleDataSeries
-            },
-            data: charData
-        });
-        chart.render();
-
-        function toggleDataSeries(e) {
-            if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                e.dataSeries.visible = false;
-            } else {
-                e.dataSeries.visible = true;
-            }
-            e.chart.render();
-        }
-    }
+    // function showLineChart(result) {
+    //     var data = eval('(' + result + ')');
+    //     var year = data[0]['year'];
+    //
+    //     charData = [];
+    //     risk = ["政治风险", "经济风险", "社会风险", "综合风险"];
+    //     var title_text;
+    //     // if (type == 0) {
+    //     //     title_text = data['country'];
+    //     for (var i = 0; i < data.length; i += 3) {
+    //         dataPts = [];
+    //         for (var j = i; j < (i + year); j++) {
+    //             var pts = {x: new Date(data[i]['yearNum'], 0, 0), y: data[i]['goal']};
+    //             dataPts.push(pts);
+    //         }
+    //         var line = {
+    //             type: "line",
+    //             name: risk[i],
+    //             showInLegend: true,
+    //             dataPoints: dataPts
+    //         };
+    //         charData.push(line);
+    //     }
+    //     // } else if (type == 1) {
+    //     //     for (var i = 0; i < data.length; i++) {
+    //     //         var str="[";
+    //     //         for(var j=0;j<year;j++)
+    //     //         {
+    //     //             str+="{label: "+data[j]['zoneNum']+", y: "+parseInt(data[j]['goal'])+"},";
+    //     //         }
+    //     //         str+="]";
+    //     //         // dataPts = [];
+    //     //         var column = {
+    //     //             type: "column",
+    //     //             name: data['zoneNum'][i] + data['yearNum'] + '年的数据',
+    //     //             legendText: "" + data['zoneNum'][i],
+    //     //             showInLegend: true,
+    //     //             dataPoints: str
+    //     //                 // [
+    //     //                 // {label: "经济风险", y: data['data'][i][1]},
+    //     //                 // {label: "社会风险", y: data['data'][i][2]},
+    //     //                 // {label: "综合风险", y: data['data'][i][3]},
+    //     //             // ]
+    //     //         };
+    //     //         charData.push(column);
+    //     //     }
+    //     // }
+    //
+    //     var chart = new CanvasJS.Chart("chartContainer", {
+    //         // title: {
+    //         //     text: data['country']
+    //         // },
+    //         axisX: {
+    //             valueFormatString: "YYYY"
+    //         },
+    //         toolTip: {
+    //             shared: true
+    //         },
+    //         legend: {
+    //             cursor: "pointer",
+    //             itemclick: toggleDataSeries
+    //         },
+    //         data: charData
+    //     });
+    //     chart.render();
+    //
+    //     function toggleDataSeries(e) {
+    //         if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+    //             e.dataSeries.visible = false;
+    //         } else {
+    //             e.dataSeries.visible = true;
+    //         }
+    //         e.chart.render();
+    //     }
+    // }
 
     function calculation() {
         debugger;
