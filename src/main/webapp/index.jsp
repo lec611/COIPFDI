@@ -83,7 +83,7 @@
                     <li class="divider">
                     </li>
                     <li>
-                        <a href="#" style="color:black;">联系管理员</a>
+                        <a href="javascript:connectAdmin();" style="color:black;">联系管理员</a>
                     </li>
                 </ul>
             </li>
@@ -367,6 +367,9 @@
             "开发机构：东南大学\n" +
             "开发人员：王兴平、赵四东、张茜、王慧、张冬烨\n" +
             "编程人员：戚晓芳、刘恩赐，徐成龙，喻学乐，贺黎，王建翔，吴长姣");
+    }
+    function connectAdmin() {
+        alert("管理员：赵四东 邮箱：454974341@qq.com")
     }
 
     // layui框架导航模块初始化，禁止删除
