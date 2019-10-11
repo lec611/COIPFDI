@@ -7,6 +7,7 @@ import edu.seu.base.CodeEnum;
 import edu.seu.base.CommonResponse;
 import edu.seu.base.Pagination;
 import edu.seu.exceptions.COIPFDIExceptions;
+import edu.seu.model.HostHolder;
 import edu.seu.model.User;
 import edu.seu.service.CaptchaService;
 import edu.seu.service.EmailService;
@@ -41,6 +42,9 @@ public class LoginController {
 
     @Autowired
     CaptchaService captchaService;
+
+    @Autowired
+    HostHolder hostHolder;
 
     @ResponseBody
     @RequestMapping("/register")
@@ -78,9 +82,12 @@ public class LoginController {
             String ticket = userService.login(nameEmail, password, codeCaptcha, oldCodeCaptcha);
             addCookie(nameEmail,ticket, response);
             HttpSession session=request.getSession(true);
+            //User user = hostHolder.getUser();
+            //System.out.println(user);
             session.setMaxInactiveInterval(30);
             request.getSession().setAttribute("ticket",ticket);
             request.getSession().setAttribute("name",nameEmail);
+           // request.getSession().setAttribute("user",user);
             return new CommonResponse(CodeEnum.SUCCESS.getValue(), "登录成功").toJSONString();
         } catch (COIPFDIExceptions e) {
             LOGGER.info(e.getMessage() + " parameter:nameEmail={}, password={}, codeCaptcha={}, oldCodeCaptcha={}",

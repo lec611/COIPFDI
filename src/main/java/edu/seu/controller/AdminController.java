@@ -1,61 +1,124 @@
 package edu.seu.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import edu.seu.base.CodeEnum;
 import edu.seu.base.CommonResponse;
 import edu.seu.model.Weight;
 import edu.seu.service.WeightService;
+import edu.seu.util.ImportExcel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
+/**
+ * @author wjx
+ * @date 2019/10/10
+ */
 @RequestMapping("/admin")
 @Controller
 public class AdminController {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
+    public String[] str = {"经贸合作区","工业园","科技园","资源园","物流园/商贸园","农业园","其他园区"};
 
     @Autowired
     WeightService weightService;
 
-    //更新数据库中的权重和标准信息
+    /**
+     * 展示数据库中现存的权重和标准信息
+     */
+    @ResponseBody
+    @RequestMapping("/showWS")
+    public String showWS(){
+        JSONArray array = new JSONArray();
+        for(int i = 0;i < 14;i++){
+            Weight weight;
+            if(i/2 == 0){
+                //查询权重信息
+                weight = weightService.queryWeightByType(str[i/2]);
+            }
+            else{
+                //查询标准信息
+                weight = weightService.queryStandardByType(str[i/2]);
+            }
+            JSONObject object = new JSONObject();
+            object.put("industry",weight.getIndustry());
+            object.put("market",weight.getMarket());
+            object.put("technology",weight.getTechnology());
+            object.put("hr",weight.getHr());
+            object.put("policy",weight.getPolicy());
+            object.put("capital",weight.getCapital());
+            object.put("culture",weight.getCulture());
+            array.add(object);
+        }
+        return JSON.toJSONString(array.toString());
+    }
+
+
+    /**
+     * 更新数据库中的权重和标准信息(Excel文件输入)
+     */
     @ResponseBody
     @RequestMapping("/updateWS")
-    public String updateWS(HttpServletRequest request, HttpServletResponse response){
+    public void updateWS(MultipartFile file,HttpServletRequest request, HttpServletResponse response){
+
         try{
-            String type = request.getParameter("type");
-            String updateType = request.getParameter("updateType");
-            String arr = request.getParameter("array");
-            String[] str = arr.substring(1,arr.length()-1).split(",");
-            double array[] = new double[str.length-1];
-            for(int i=0;i<7;i++){
-                array[i] = Double.parseDouble(str[i].substring(1,str[i].length()-1));
+            ImportExcel importExcel = new ImportExcel();
+            List<Weight> dataList = importExcel.read(file.getOriginalFilename(),file);
+
+            //错误判断
+            if (dataList == null) {
+                LOGGER.error("管理员输入的文件为空！");
             }
             Weight weight = new Weight();
-            weight.setType(type);
-            weight.setIndustry(array[0]);
-            weight.setMarket(array[1]);
-            weight.setTechnology(array[2]);
-            weight.setHr(array[3]);
-            weight.setPolicy(array[4]);
-            weight.setCapital(array[5]);
-            weight.setCulture(array[6]);
-            if(updateType.equals("weight")){
+            for(int i = 0;i < dataList.size()-1;i += 2){
+                //更新权重信息
+                weight = dataList.get(i);
+                weight.setType(str[i/2]);
                 weightService.updateWeight(weight);
-            }else{
+                //更新标准信息
+                weight = dataList.get(i+1);
+                weight.setType(str[i/2]);
                 weightService.updateStandard(weight);
             }
-            return JSON.toJSONString("SUCCESS!");
+
         }catch(Exception e){
             LOGGER.error(e.getMessage());
-            return new CommonResponse(CodeEnum.USER_ERROR.getValue(),e.getMessage()).toJSONString();
+            e.printStackTrace();
         }
     }
 
 }
+/*
+<!--加载页面时展示初始权重和标准信息-->
+        $(function () {
+        $.ajax({
+        type: 'post',
+        url: '${ctx}/admin/showWS',
+        dataType: 'json',
+        success: function (result) {
+        var data = eval('('+result+')');
+        showWeightAndStandard(data);
+        }
+        });
+        });
+
+<!--展示数据-->
+        function showWeightAndStandard(data){
+        var array = new Array(2*7*7);
+        for (var i = 0; i < 2*7*7; i++) {
+        array[i] = document.getElementById(("weight" + i).toString()).value;
+        }
+
+        }
+*/

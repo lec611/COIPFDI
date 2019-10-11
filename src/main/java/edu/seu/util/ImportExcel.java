@@ -94,11 +94,11 @@ public class ImportExcel {
 
         //把spring文件上传的MultipartFile转换成CommonsMultipartFile类型
         CommonsMultipartFile cf = (CommonsMultipartFile) Mfile; //获取本地存储路径
-        File file = new File("F:\\fileupload");
+        File file = new File("D:\\fileupload");
         //创建一个目录 （它的路径名由当前 File对象指定，包括任一必须的父路径。）
         if (!file.exists()) file.mkdirs();
         //新建一个文件
-        File file1 = new File("F:\\fileupload\\" + new Date().getTime() + ".xlsx");
+        File file1 = new File("D:\\fileupload\\" + new Date().getTime() + ".xlsx");
         //将上传的文件写入新建的文件中
         try {
             cf.getFileItem().write(file1);

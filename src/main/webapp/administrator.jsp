@@ -5,7 +5,11 @@
   Time: 11:00
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; Charset=gb2312">
@@ -65,15 +69,6 @@
             <li class="dropdown pull-right layui-nav-item">
                 <a href="#" onClick="javascript:parameter();return false;">参数预设</a>
             </li>
-            <li class="dropdown pull-right layui-nav-item">
-                <a href="#" onClick="javascript:application();return false;">上载申请处理</a>
-            </li>
-            <li class="dropdown pull-right layui-nav-item">
-                <a href="#" onClick="javascript:contactAdmin();return false;">联系管理员</a>
-            </li>
-            <li class="dropdown pull-right layui-nav-item">
-                <a href="#">审批管理员</a>
-            </li>
             <!--禁止删除-->
             <li class="layui-nav-item" id="adminMenu">
 
@@ -81,7 +76,7 @@
         </ul>
         <ul class="layui-nav layui-layout-right head-nav-right">
             <button type="button" class="btn btn-primary btn-lg" style="font-size:12px;margin-right:20px">
-                <span class="glyphicon glyphicon-user"></span> User
+                <span class="glyphicon glyphicon-user"></span>
             </button>
         </ul>
 
@@ -91,58 +86,22 @@
     </div>
 
     <div class="blog-main">
-        <div style="margin-left: 20px;margin-right: 20px;display: none;" id="contactAdminDiv">
-            <table class="table table-hover table-bordered" style="text-align:center;margin:0px;">
-                <tr><td>序号</td><td>姓名</td><td>邮箱</td><td>备注</td></tr>
-                <tr><td>1</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-                <tr><td>2</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-                <tr><td>3</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-                <tr><td>4</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-                <tr><td>5</td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td><td><input type="text" style="border:0px" class="layui-input doc-search" id=""></td></tr>
-            </table>
-            <div style="text-align: center;margin: 20px;">
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="">修改 </button>
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="">保存 </button>
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="">取消 </button>
-            </div>
-        </div>
-        <div style="margin-left: 20px;margin-right: 50px;display: none;" id="applicationDiv">
-            <table class="table table-hover table-bordered" style="text-align:center;margin:20px;">
-<%--                <tr><td rowspan="2"><table><tr><td width="70%"></td><td>园区类型</td></tr><div class="bias1"></div><tr><td>指标</td><td></td></tr></table></td><td colspan="6">园区类型</td></tr>--%>
-                <tr><td rowspan="2" style="padding: 0px" width="180px;"><img src="static/images/table2.png"></td><td colspan="6">园区类型</td></tr>
-                <tr><td>指标层得分</td><td>标准</td><td>准则层得分</td><td>权重</td><td>目标层得分:融合化发展指数</td></tr>
-                <tr><td>产业融合度</td><td></td><td></td><td></td><td></td><td rowspan="7"></td></tr>
-                <tr><td>市场融合度</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>技术融合度</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>人员融合度</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>政策依赖度</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>资本依赖度</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>社会文化影响度</td><td></td><td></td><td></td><td></td></tr>
-            </table>
-            <div style="text-align: center;margin: 20px;">
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="pass">通过 </button>
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="inputReason()" id="dispass">不通过 </button>
-                <input type="text" id="reason" placeholder="请输入反馈理由" autocomplete="off" class="layui-input" style="display: none">
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="submit" style="display: none">提交 </button>
-            </div>
-        </div>
-        <div style="margin-left: 20px;margin-right: 50px;display: none" id="parameterDiv">
+        <div style="margin-left: 20px;margin-right: 50px;" id="parameterDiv">
             <table class="table table-hover table-bordered" style="text-align:center;margin:20px;">
 <%--                <tr><td rowspan="2"><table><div class="bias2"><tr><td width="60%"></td><td >园区类型</td></tr><tr><td></td><td></td></tr><tr><td>指标</td><td></td></tr></div></table></td><td colspan="2">经贸合作区</td><td colspan="2">工业园</td><td colspan="2">科技园</td><td colspan="2">资源园</td><td colspan="2">物流园/商业园</td><td colspan="2">农业园</td><td colspan="2">其他园区</td></tr>--%>
                 <tr><td rowspan="2" style="padding: 0px" width="180px;"><img src="static/images/table1.png"></td><td colspan="2">经贸合作区</td><td colspan="2">工业园</td><td colspan="2">科技园</td><td colspan="2">资源园</td><td colspan="2">物流园/商业园</td><td colspan="2">农业园</td><td colspan="2">其他园区</td></tr>
                 <tr><td>权重</td><td>标准</td><td>权重</td><td>标准</td><td>权重</td><td>标准</td><td>权重</td><td>标准</td><td>权重</td><td>标准</td><td>权重</td><td>标准</td><td>权重</td><td>标准</td></tr>
-                <tr><td>产业融合度</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>市场融合度</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>技术融合度</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>人员融合度</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>政策依赖度</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>资本依赖度</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>社会文化影响度</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>产业融合度</td><td id="industry0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>市场融合度</td><td id="market0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>技术融合度</td><td id="technology0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>人员融合度</td><td id="hr0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>政策依赖度</td><td id="policy0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>资本依赖度</td><td id="capital0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>社会文化影响度</td><td id="culture0"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
             </table>
-            <div style="text-align: center;margin: 20px;">
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="">修改 </button>
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="">保存 </button>
-                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="">取消 </button>
+            <div style="text-align: center;margin: 60px;position: relative">
+                <input type="file" id="inputFile" class="form-control" name="inputFile" style="width: 80%;float: left">
+                <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="" style="float: left">上传文件 </button>
             </div>
         </div>
     </div>
@@ -150,27 +109,25 @@
 
 </body>
 <script>
-    function contactAdmin() {
-        document.getElementById("contactAdminDiv").style.display="block";
-        document.getElementById("applicationDiv").style.display="none";
-        document.getElementById("parameterDiv").style.display="none";
-    }
-
-    function application() {
-        document.getElementById("contactAdminDiv").style.display="none";
-        document.getElementById("applicationDiv").style.display="block";
-        document.getElementById("parameterDiv").style.display="none";
-    }
-
-    function parameter() {
-        document.getElementById("parameterDiv").style.display="block";
-        document.getElementById("contactAdminDiv").style.display="none";
-        document.getElementById("applicationDiv").style.display="none";
-    }
-
-    function inputReason(){
-        document.getElementById("reason").style.display="block";
-        document.getElementById("submit").style.display="block";
-    }
+    //加载数据
+    $(function () {
+        $.ajax({
+            url:'${ctx}/admin/showWS',	//后台接收数据地址
+            data:"",
+            type: "POST",
+            dataType: "json",
+            cache: false,			//上传文件无需缓存
+            processData: false,		//用于对data参数进行序列化处理 这里必须false
+            contentType: false,
+            success:function(resultD){
+                alert(resultD);
+                var data=eval('('+resultD+')');
+                document.getElementById('capital0').innerText=data[0]['capital'];
+            },
+            failure: function (data) {
+                alert(data+"获取数据失败！");
+            }
+        })
+    })
 </script>
 </html>

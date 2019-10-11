@@ -1,3 +1,8 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -76,7 +81,6 @@
                         <a href="#" style="color:black;">参数预设</a>
                     </li>
                     <li class="divider">
-                    </li>
                     </li>
                     <li>
                         <a href="#" style="color:black;">联系管理员</a>
@@ -163,39 +167,6 @@
                                 </select>
                             </li>
                         </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>评价结果查询(篇名/关键词)
-                        <input type="text" name="" class="layui-input doc-search" id="simSearchKey"
-                               placeholder="请输入：关键字" style="width:180px;">
-                        <button class="layui-btn layui-btn-normal layui-btn-sm" lay-submit="" lay-filter="formSearch" id="simpleSearch"
-                                onclick="doClickSimplySearch();"  style="margin-top:5px;width: 180px">搜索
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="panel panel-default" style="width:240px;">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    查询结果列表
-                                </h3>
-                            </div>
-                            <div id="table_div" align="left">
-                                <table id="queryResultTable" width="98%" border="0" cellspacing="0" cellpadding="0">
-                                    <tr>
-                                        <th>&nbsp;<b>查询编号</b></th>
-                                        <th>&nbsp;<b>用户名</b></th>
-                                        <th>&nbsp;<b>园区类型</b></th>
-                                        <th>&nbsp;<b>       </b></th>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="panel-body">
-
-                            </div>
-                        </div>
                     </td>
                 </tr>
             </table>
@@ -351,6 +322,7 @@
     var userInfo = {};
     userInfo.id = "${user.id}";
     userInfo.name = "${user.name}";
+    // alert(userInfo.name);
     var result="";//存储计算结果
     var data={};//存放后台返回的JSON数据
     var authEnum = ["游客可见", "注册用户可见", "VIP用户可见", "管理员可见"];
@@ -384,7 +356,7 @@
             }
         })
     })
->>>>>>> Stashed changes
+
 
     // layui框架导航模块初始化，禁止删除
     var layer, element;
@@ -408,7 +380,7 @@
     // 点击水平导航栏“编辑”、“文件”、“文件审核”显示文件
     function doClickHorizontalMenu(isActive, isEdit) {
         if (isActive == "false" && isEdit == "true" && userInfo.level == 0) {
-            location = '${ctx}/login.jsp';
+            location = '${ctx}/login';
         }
         clearVerticalMenuCSS();
         $("#isActive").val(isActive);
@@ -440,6 +412,8 @@
     function checkUserLogin() {
         var name="<%=session.getAttribute("name")%>";
         var ticket="<%=session.getAttribute("ticket")%>";
+        var user="<%=session.getAttribute("user")%>";
+        alert(userInfo.id);
         // alert(name);
         // alert(ticket);
 
@@ -1045,79 +1019,6 @@
         });
     });
 
-    function zhuzhuangChart() {
-        // 路径配置
-        require.config({
-            paths: {
-                echarts: 'http://echarts.baidu.com/build/dist'
-            }
-        });
-
-        // 使用
-        require(
-            [
-                'echarts',
-                'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
-            ],
-            function (ec) {
-                // 基于准备好的dom，初始化echarts图表
-                var myChart = ec.init(document.getElementById('chartContainer'));
-
-                option = {
-                    calculable: true,
-                    xAxis: [
-                        {
-                            type: 'category',
-                            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-                        }
-                    ],
-                    yAxis: [
-                        {
-                            type: 'value'
-                        }
-                    ],
-                    series: [
-                        {
-                            name: '蒸发量',
-                            type: 'bar',
-                            data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3],
-                            markPoint: {
-                                data: [
-                                    {type: 'max', name: '最大值'},
-                                    {type: 'min', name: '最小值'}
-                                ]
-                            },
-                            markLine: {
-                                data: [
-                                    {type: 'average', name: '平均值'}
-                                ]
-                            }
-                        },
-                        {
-                            name: '降水量',
-                            type: 'bar',
-                            data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
-                            markPoint: {
-                                data: [
-                                    {name: '年最高', value: 182.2, xAxis: 7, yAxis: 183, symbolSize: 18},
-                                    {name: '年最低', value: 2.3, xAxis: 11, yAxis: 3}
-                                ]
-                            },
-                            markLine: {
-                                data: [
-                                    {type: 'average', name: '平均值'}
-                                ]
-                            }
-                        }
-                    ]
-                };
-
-                // 为echarts对象加载数据
-                myChart.setOption(option);
-            }
-        );
-    }
-
     function bingChart(result) {
 
         var data = eval('('+result+')');
@@ -1337,7 +1238,10 @@
     }
 
     function showBarChart(result) {//柱状图
+        alert(result);
         var data = eval('('+result+')');
+        var year=data[0]['year'];
+        alert(year);
         charData = [];
         for (var i = 0; i < data.length; i++) {
             var column = {
@@ -1351,6 +1255,14 @@
                 ]
             };
             charData.push(column);
+            if ((i+1)%year==0){
+                var column = {
+                    type: "column",
+                    showInLegend: false,
+                    dataPoints: [{}]
+                };
+                charData.push(column);
+            }
         }
 
         var chart = new CanvasJS.Chart("chartContainer", {
@@ -1461,6 +1373,11 @@
         for (var i = 0; i < 7; i++) {
             array[i] = document.getElementById(("data" + i).toString()).value;
         }
+        alert(array[0]);
+        if(result!=null&&array[0]==""){
+            showBarChart(result);
+            return ;
+        }
         for (var i = 0; i < 7; i++) {
             array[7 + i] = document.getElementById(("weight" + i).toString()).value;
         }
@@ -1525,6 +1442,10 @@
         var Obj4 = document.getElementById("type");
         var index4 = Obj4.selectedIndex;
         var text4 = Obj4.options[index4].text;
+        //图类型
+        var Obj5 = document.getElementById("chartType");
+        var index5 = Obj5.selectedIndex;
+        var value = Obj5.options[index5].value;
 
         var formData = new FormData();
         formData.append('file', $('#inputFile')[0].files[0]); // 固定格式
@@ -1532,6 +1453,7 @@
         formData.append('timeCount', text2);
         formData.append('typeCount', text3);
         formData.append('type', text4);
+        formData.append('chartType', value);
 
         $.ajax({
             url:'${ctx}/calculate/file',	//后台接收数据地址
@@ -1542,11 +1464,12 @@
             processData: false,		//用于对data参数进行序列化处理 这里必须false
             contentType: false,
             success:function(resultD){
+                outputOpt = "文件输出";
                 alert("文件上传成功！");
                 result=resultD;
-                showBarChart(result);
+                // showBarChart(result);
             },
-            failure: function(data) {
+            failure: function (data) {
                 alert(data+"文件上传失败！");
             }
         })
