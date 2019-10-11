@@ -86,6 +86,11 @@
     </div>
 
     <div class="blog-main">
+        <div style="margin-left:80px;">
+            <h1>文件上传下载说明</h1><br>
+            当前说明文件可供普通用户进行下载阅读，点击下方下载说明文件即可。<br>
+            上传说明文件仅管理员可进行操作，普通用户不可以进行操作。
+        </div>
         <div style="margin-left: 20px;margin-right: 50px;" id="parameterDiv">
             <div style="text-align: center;margin: 60px;position: relative">
                 <input type="file" id="inputFile" class="form-control" name="inputFile" style="width: 80%;float: left">
@@ -93,11 +98,37 @@
         </div>
         <br><br><br>
         <div style="text-align: center">
-            <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="updateData()" id="1" style="">上传说明文件</button>
-            <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="download()" id="2" style="">下载说明文件</button>
+            <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="uploadGuide()" id="1" style="">上传说明文件</button>
+            <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="" id="2" ><a href="/guideFile/download" style="color: white;">下载说明文件</a></button>
         </div>
     </div>
 </div>
 
 </body>
+<script>
+    //上传说明文件
+    function uploadGuide(){
+        var formData = new FormData();
+        formData.append('file', $('#inputFile')[0].files[0]); // 固定格式
+
+        $.ajax({
+            url:'${ctx}/guideFile/upload',	//后台接收数据地址
+            data:formData,
+            type: "POST",
+            dataType: "json",
+            cache: false,			//上传文件无需缓存
+            processData: false,		//用于对data参数进行序列化处理 这里必须false
+            contentType: false,
+            success: function(result){
+                alert("默认数据修改成功！");
+                //刷新界面
+                history.go(0);
+            },
+            failure: function (data) {
+                alert(data+"文件上传失败！");
+            }
+        })
+    }
+
+</script>
 </html>
