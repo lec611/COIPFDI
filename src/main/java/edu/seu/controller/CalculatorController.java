@@ -108,7 +108,7 @@ public class CalculatorController {
             Sheet sheet = wb.createSheet("融合指数测度表");
             OutputStream os = response.getOutputStream();
             //将结果导出为Excel文件
-            response.setContentType("application/vnd.ms-excel;charset=utf-8");
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
             //提供打开/保存对话框，将文件作为附件下载
             response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
 
