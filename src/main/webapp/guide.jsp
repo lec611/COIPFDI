@@ -89,10 +89,9 @@
         普通用户可以点击下载按钮下载使用说明<br>
         仅有管理员可以上传使用说明文件<br>
     </div>
-
     <div class="blog-main">
         <div style="margin-left: 20px;margin-right: 50px;" id="parameterDiv">
-            <div style="text-align: center;margin: 60px;position: relative">
+            <div style="text-align: center;margin-left:30px;position: relative">
                 <input type="file" id="inputFile" class="form-control" name="inputFile" style="width: 80%;float: left">
             </div>
         </div>
