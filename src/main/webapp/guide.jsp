@@ -84,6 +84,11 @@
             <i class="fa fa-navicon"></i>
         </a>
     </div>
+    <div style="margin-left: 50px">
+        <h2>使用说明下载</h2>
+        普通用户可以点击下载按钮下载使用说明<br>
+        仅有管理员可以上传使用说明文件<br>
+    </div>
 
     <div class="blog-main">
         <div style="margin-left: 20px;margin-right: 50px;" id="parameterDiv">
@@ -93,8 +98,8 @@
         </div>
         <br><br><br>
         <div style="text-align: center">
-            <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="uploadGuideFile()" id="1" style="">上传说明文件</button>
-            <button class="layui-btn" lay-submit="" lay-filter="formSearch" id="2" style=""><a href="${ctx}/guideFile/download">下载说明文件</button>
+            <button class="layui-btn" lay-submit="" lay-filter="formSearch" onclick="uploadGuideFile()" id="1" style="color:white">上传说明文件</button>
+            <button class="layui-btn" lay-submit="" lay-filter="formSearch" id="2" style=""><a href="${ctx}/guideFile/download" style="color: white">下载说明文件</a></button>
         </div>
     </div>
 </div>
