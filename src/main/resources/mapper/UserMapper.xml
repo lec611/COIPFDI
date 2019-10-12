@@ -24,17 +24,27 @@
         </trim>
     </update>
 
-    <update id="completeInfo" parameterType="edu.seu.model.User">
+    <update id="updateInfo" parameterType="edu.seu.model.User">
         update user
         set
         <trim suffixOverrides=",">
-            phoneNum = #{phoneNum},
-            sex = #{sex},
-            company = #{company},
-            address = #{address},
-            domain = #{domain},
+            <if test="phoneNum!=null">
+                phoneNum = #{phoneNum},
+            </if>
+            <if test="sex!=null">
+                sex = #{sex},
+            </if>
+            <if test="company!=null">
+                company = #{company},
+            </if>
+            <if test="address!=null">
+                address = #{address},
+            </if>
+            <if test="domain!=null">
+                domain = #{domain},
+            </if>
         </trim>
-        <where>id = #{id}</where>
+        <where>name = #{name}</where>
     </update>
 
 </mapper>

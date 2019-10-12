@@ -181,7 +181,7 @@ public class ImportExcel {
      * 读取数据
      */
     private List<Weight> read(Workbook wb) {
-        List<Weight> dataList = new ArrayList<>();
+        List<Weight> dataList;
         //得到第一个shell
         Sheet sheet = wb.getSheetAt(0);
         //得到Excel的行数

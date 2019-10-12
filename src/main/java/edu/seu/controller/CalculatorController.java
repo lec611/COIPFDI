@@ -8,7 +8,7 @@ import edu.seu.base.CommonResponse;
 import edu.seu.model.Weight;
 import edu.seu.service.WeightService;
 import edu.seu.util.ImportExcel;
-import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -17,12 +17,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -91,28 +96,29 @@ public class CalculatorController {
 
     @ResponseBody
     @RequestMapping("/outputTable")
-    public void outputTable(HttpServletRequest request, HttpServletResponse response) {
+    public void outputTable(HttpServletRequest request) {
         try {
             String customize = request.getParameter("customize");
             String arr = request.getParameter("array");
             double goal;
+
             String[] str = arr.substring(1, arr.length() - 1).split(",");
             double[] array = new double[str.length - 1];
             for (int i = 0; i < 7; i++) {
                 array[i] = Double.parseDouble(str[i].substring(1, str[i].length() - 1));
             }
 
-            String fileName = System.currentTimeMillis() + ".xlsx";
+            ServletContext context = request.getSession().getServletContext();
+            String realPath = context.getRealPath("/file");
+            //若文件路径不存在，则创建
+            File mkdir = new File(realPath);
+            if (!mkdir.exists()) {
+                mkdir.mkdirs();
+            }
+
             Workbook wb = new XSSFWorkbook();
             //得到第一个shell
             Sheet sheet = wb.createSheet("融合指数测度表");
-            OutputStream os = response.getOutputStream();
-            //将结果导出为Excel文件
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
-            //提供打开/保存对话框，将文件作为附件下载
-            response.setHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
-
-            System.out.println("1:" + fileName);
 
             //自定义模式
             if ("是".equals(customize)) {
@@ -142,16 +148,11 @@ public class CalculatorController {
                 tableExcelGenerator(sheet, Arrays.copyOfRange(array, 0, 7), weight, goal);
             }
 
-            System.out.println("2:" + fileName);
-
-            wb.write(os);
-            os.close();
-
-            System.out.println("3:" + fileName);
-
-//            FileOutputStream fileOutputStream = new FileOutputStream(fileName);
-//            wb.write(fileOutputStream);
-//            fileOutputStream.close();
+            //将文件输出到本地特定位置，供outputExcel返回给前端下载
+            String fileName = "融合指数测度表.xlsx";
+            FileOutputStream fileOutputStream = new FileOutputStream(realPath + "/" + fileName);
+            wb.write(fileOutputStream);
+            fileOutputStream.close();
 
         } catch (Exception e) {
             LOGGER.error("wjx__" + e.getMessage());
@@ -160,7 +161,7 @@ public class CalculatorController {
     }
 
     /**
-     *Excel表数据填充函数
+     * Excel表数据填充函数
      */
     public void tableExcelGenerator(Sheet sheet, double[] data, double[] weight, double goal) {
         String[] str1 = {"指标", "数值", "权重", "融合化发展指数"};
@@ -189,11 +190,14 @@ public class CalculatorController {
         cellGoal.setCellValue(goal);
     }
 
+    /**
+     * 计算文件传输的结果，并且同时将用户可能要求输出的文件保存到本地
+     */
     @ResponseBody
     @RequestMapping("/file")
     public String calculateFile(HttpServletRequest request, HttpServletResponse response,
                                 @RequestParam(value = "file") MultipartFile file, @RequestParam(value = "numCount") String numCount,
-                                @RequestParam(value = "timeCount") String timeCount, @RequestParam(value = "typeCount") String typeCount, @RequestParam(value = "type") String type) {
+                                @RequestParam(value = "timeCount") String timeCount, @RequestParam(value = "typeCount") String typeCount, @RequestParam(value = "type") String type) throws IOException {
         //几个园区
         int num = Integer.parseInt(numCount);
         //共几年
@@ -206,6 +210,7 @@ public class CalculatorController {
          */
         ImportExcel importExcel = new ImportExcel();
         List<Weight> dataList = importExcel.read(file.getOriginalFilename(), file);
+        List<Double> goalArray = new ArrayList<>();
 
         //错误判断
         if (dataList == null) {
@@ -225,11 +230,12 @@ public class CalculatorController {
             for (int i = 0; i < dataList.size(); i++) {
                 goal = goal(dataList.get(i), weight);
                 JSONObject object = new JSONObject();
-                object.put("year",year);
+                object.put("year", year);
                 object.put("zoneNum", "园区" + (i / year + 1));
                 object.put("yearNum", (i % year + 1));
                 object.put("goal", new DecimalFormat("#.0000").format(goal));
                 array.add(object);
+                goalArray.add(goal);
             }
         }
         //多园区类型(后面2*num个数据表示权重和标准)或单个园区类型且并未省略权重信息
@@ -237,18 +243,104 @@ public class CalculatorController {
             for (int i = 0; i < dataList.size() - 2 * num; i++) {
                 goal = goal(dataList.get(i), dataList.get(year * num + i / year));
                 JSONObject object = new JSONObject();
-                object.put("year",year);
+                object.put("year", year);
                 object.put("zoneNum", "园区" + (i / year + 1));
-                object.put("yearNum", (i % year + 1) );
+                object.put("yearNum", (i % year + 1));
                 object.put("goal", new DecimalFormat("#.0000").format(goal));
                 array.add(object);
+                goalArray.add(goal);
             }
         }
+
+        //生成文件到本地
+        ServletContext context = request.getSession().getServletContext();
+        String realPath = context.getRealPath("/file");
+        //若文件路径不存在，则创建
+        File mkdir = new File(realPath);
+        if (!mkdir.exists()) {
+            mkdir.mkdirs();
+        }
+
+        Workbook wb = new XSSFWorkbook();
+        //得到第一个shell
+        Sheet sheet = wb.createSheet("融合指数测度表");
+        fileExcelGenerator(sheet, dataList, goalArray);
+
+        //将文件输出到本地特定位置，供outputExcel返回给前端下载
+        String fileName = "融合指数测度表.xlsx";
+        FileOutputStream fileOutputStream = new FileOutputStream(realPath + "/" + fileName);
+        wb.write(fileOutputStream);
+        fileOutputStream.close();
+
         return JSON.toJSONString(array.toString());
     }
 
     /**
-     *按公式进行通用计算并返回得分
+     * Excel文件数据填充函数
+     */
+    public void fileExcelGenerator(Sheet sheet, List<Weight> dataList, List<Double> goalArray) {
+        String[] str = {"产品融合度", "市场融合度", "技术融合度", "人员融合度", "政策依赖度", "资本依赖度", "社会文化影响度", "融合化发展指数"};
+
+        for (int r = 0; r < str.length; r++) {
+            //生成最左列提示信息
+            Row row = sheet.createRow(r);
+            Cell cell = row.createCell(0);
+            cell.setCellValue(str[r]);
+
+            for (int i = 1; i <= dataList.size(); i++) {
+                Weight weight = dataList.get(i-1);
+                if (r == 0) {
+                    cell = row.createCell(i);
+                    cell.setCellValue(weight.getIndustry());
+                }else if (r == 1) {
+                    cell = row.createCell(i);
+                    cell.setCellValue(weight.getMarket());
+                }else if (r == 2) {
+                    cell = row.createCell(i);
+                    cell.setCellValue(weight.getTechnology());
+                }else if (r == 3) {
+                    cell = row.createCell(i);
+                    cell.setCellValue(weight.getHr());
+                }else if (r == 4) {
+                    cell = row.createCell(i);
+                    cell.setCellValue(weight.getPolicy());
+                }else if (r == 5) {
+                    cell = row.createCell(i);
+                    cell.setCellValue(weight.getCapital());
+                }else if (r == 6) {
+                    cell = row.createCell(i);
+                    cell.setCellValue(weight.getCulture());
+                }else if (r == 7) {
+                    if(i > goalArray.size()){
+                        break;
+                    }
+                    cell = row.createCell(i);
+                    cell.setCellValue(goalArray.get(i-1));
+                }
+            }
+        }
+    }
+
+    /**
+     * 返回给a标签以供用户下载
+     */
+    @ResponseBody
+    @RequestMapping("/outputExcel")
+    public ResponseEntity<byte[]> outputTableExcel(HttpServletRequest request) throws IOException {
+        ServletContext context = request.getSession().getServletContext();
+        String realPath = context.getRealPath("/file");
+
+        String fileName = "融合指数测度表.xlsx";
+        File file = new File(realPath + "/" + fileName);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        httpHeaders.setContentDispositionFormData("attachment", URLEncoder.encode(file.getName(), "UTF-8"));
+        return new ResponseEntity<>(FileUtils.readFileToByteArray(file), httpHeaders, HttpStatus.OK);
+
+    }
+
+    /**
+     * 按公式进行通用计算并返回得分
      */
     public double goal(double[] point, double[] weight) {
         double sum = 0;
@@ -259,7 +351,7 @@ public class CalculatorController {
     }
 
     /**
-     *对于传入的是两个weight类型的数据结构(由于数值类型和权重类型的数据结构相差不大，因此混用)
+     * 对于传入的是两个weight类型的数据结构(由于数值类型和权重类型的数据结构相差不大，因此混用)
      */
     public double goal(Weight data, Weight weight) {
         return data.getIndustry() * weight.getIndustry()

@@ -156,7 +156,7 @@
                         changeCaptcha();
                         return false;
                     } else {
-                        window.location.href = "${ctx}/modifyPassword.jsp";
+                        window.location.href = "${ctx}/updatePassword.jsp";
                     }
                 }
             });

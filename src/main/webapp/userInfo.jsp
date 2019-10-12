@@ -38,7 +38,7 @@
 <body class="login-bg">
 
 <div class="login layui-anim layui-anim-up">
-    <div class="message">COIPFDI - 修改个人信息</div>
+    <div class="message">COIPFDI - 修改个人信息<div style="text-align: right"><a href="${ctx}/updatePassword">点此修改密码</a></div></div><div></div>
     <div id="darkbannerwrap"></div>
     <form class="layui-form" action="" method="post">
         <input type="text" name="username" id="username"  placeholder="用户名(不可改)" disabled="true"
@@ -63,7 +63,7 @@
         <hr class="hr15">
         
         
-        <button style="width: 100%" class="layui-btn layui-btn-radius" lay-submit="" lay-filter="submit">保存修改</button>
+        <button style="width: 100%" class="layui-btn layui-btn-radius" lay-submit="" lay-filter="submit" onclick="saveChange()">保存修改</button>
         <hr class="hr15" >
     </form>
 </div>
@@ -74,120 +74,50 @@
 <script src='./static/js/jquery/jquery.min.js'></script>
 <script>
     $(function () {
-        changeCaptcha();
-        checkIdentityOfPassword();
-        $("#sendEmail").unbind("click").bind("click", function () {
-           sendEmail();
-        });
-    });
-
-    // 检查两次密码输入的一致性
-    function checkIdentityOfPassword() {
-        $("#rePassword").on("input propertychange", function () {
-            console.log(1);
-            $("#rePassword").addClass("rePassword");
-            var passWord = $("#password").val();
-            var rePassWord = $("#rePassword").val();
-            if (passWord == rePassWord) {
-                $("#rePassword").removeClass("rePassword");
-            }
-        });
-    }
-
-    // 更换验证码
-    function changeCaptcha() {
-        $.get('${ctx}/reglogin/codeCaptcha', function (data) {
-            $("#captchaImg").attr('src', 'data:image/jpeg;base64,' + data.data.image);
-        });
-    }
-
-    function sendEmail() {
-        var email = $("#email").val();
-        var codeCaptcha = $("#codeCaptcha").val();
         $.ajax({
-            type: 'get',
-            url: '${ctx}/reglogin/emailCaptcha',
-            data: {"email": email, "codeCaptcha": codeCaptcha},
+            type: 'post',
+            url: '${ctx}/userInfo/initShow',
+            data: [],
             dataType: 'json',
             success: function (data) {
-                if (data.code !== 200) {
-                    layer.msg(data.msg, {icon: 2});
-                    changeCaptcha();
-                    return false;
-                } else {
-                    suspendEmailService();
-                }
+                var result=eval('('+data+')');
+
+                document.getElementById('username').value=result['name'];
+                document.getElementById('email').value=result['email'];
+                document.getElementById('password').value=result['password'];
+                document.getElementById('mobilePhone').value=result['phoneNum'];
+                document.getElementById('sex').value=result['sex'];
+                document.getElementById('companyName').value=result['company'];
+                document.getElementById('companyAddress').value=result['address'];
+                document.getElementById('researchArea').value=result['domain'];
+            },
+            failure: function (data) {
+                alert("获取数据失败！");
             }
         });
-        return false;
+
+    });
+
+    function saveChange() {
+        var mobile=document.getElementById('mobilePhone').value;
+        var sex=document.getElementById('sex').value;
+        var companyName=document.getElementById('companyName').value;
+        var companyAddress=document.getElementById('companyAddress').value;
+        var researchArea=document.getElementById('researchArea').value;
+
+        $.ajax({
+            type: 'post',
+            url: '${ctx}/userInfo/updateInfo',
+            data: {"phoneNum": mobile,"sex":sex,"company":companyName,"address":companyAddress,"domain":researchArea},
+            dataType: 'json',
+            success: function () {
+                alert("修改成功！");
+                //返回主界面
+                history.go(-1);
+            }
+        });
     }
 
-    function suspendEmailService() {
-        $("#sendEmail").hide();
-        $("#disableSendEmail").show();
-
-        var time = 60;
-        var p = $("#disableSendEmail")[0];
-        var set = setInterval(function () {
-            time--;
-            p.innerHTML = time + "s";
-            if (time === 0) {
-                $("#sendEmail").show();
-                $("#disableSendEmail").hide();
-                clearInterval(set);
-            }
-        }, 1000);
-    };
-
-    layui.use(['form', 'layer'], function(){
-        var form = layui.form;
-        var layer = layui.layer;
-        var $ = layui.jquery;
-
-        function checkRegisterInfo(username, email, password, rePassword, codeCaptcha, emailCaptcha) {
-            if (username.trim() == "" || username.trim() == null) return "请输入用户名！";
-            if (email.trim() == "" || email.trim() == null) return "请输入邮箱！";
-            if (password == "" || password == null) return "请输入密码！";
-            if (rePassword == "" || rePassword == null) return "请输入确认密码！";
-            if (codeCaptcha == "" || codeCaptcha == null) return "请输入验证码！";
-            if (emailCaptcha == "" || emailCaptcha == null) return "请输入邮箱验证码！";
-            if (!(password==rePassword)) return "两次输入密码不一致！";
-            return "";
-        }
-        //监听提交
-        form.on('submit(submit)', function(){
-            var username = $("#username").val();
-            var email = $("#email").val();
-            var password = $("#password").val();
-            var rePassword = $("#rePassword").val();
-            var codeCaptcha = $("#codeCaptcha").val();
-            var emailCaptcha = $("#emailCaptcha").val();
-
-            var hint = checkRegisterInfo(username, email, password, rePassword, codeCaptcha, emailCaptcha);
-            if (hint != "") {
-                layer.msg(hint, {icon:2});
-                return false;
-            }
-
-            $.ajax({
-                type: 'post',
-                url: '${ctx}/reglogin/register',
-                data: {"name": username, "email":email, "password": password, "codeCaptcha": codeCaptcha, "emailCaptcha": emailCaptcha},
-                dataType: 'json',
-                success: function (data) {
-                    if (data.code !== 200) {
-                        layer.msg(data.msg,{icon: 2});
-                        changeCaptcha();
-                        return false;
-                    } else {
-                        location = "${ctx}/";
-                    }
-
-                }
-            });
-            return false;
-        });
-    });
 
 </script>
 </body>

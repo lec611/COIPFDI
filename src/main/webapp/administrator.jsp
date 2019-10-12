@@ -75,7 +75,7 @@
             </li>
         </ul>
         <ul class="layui-nav layui-layout-right head-nav-right">
-            <button type="button" class="btn btn-primary btn-lg" style="font-size:12px;margin-right:20px">
+            <button type="button" class="btn btn-primary btn-lg" style="font-size:12px;margin-right:20px" id="userInfoButton">
                 <span class="glyphicon glyphicon-user"></span>
             </button>
         </ul>
@@ -138,6 +138,14 @@
                 alert(data+"文件上传失败！");
             }
         })
+        var name = "<%=session.getAttribute("name")%>";
+        var ticket = "<%=session.getAttribute("ticket")%>";
+
+        if (name != null && ticket != null && name != "null" && ticket != "null") {
+            var html = "";
+            html = html + '<a href="${ctx}/userInfo.jsp;" style="color:white;">欢迎' + name + '</a>';
+            $("#userInfoButton").html(html);
+        }
     })
 
     //更新数据

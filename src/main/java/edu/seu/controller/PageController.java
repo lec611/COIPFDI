@@ -30,11 +30,6 @@ public class PageController {
         return "findPassword";
     }
 
-    @RequestMapping("/modifyPassword")
-    public String modifyPassword(){
-        return "modifyPassword";
-    }
-
     @RequestMapping("/updatePassword")
     public String updatePassword(){
         return "updatePassword";

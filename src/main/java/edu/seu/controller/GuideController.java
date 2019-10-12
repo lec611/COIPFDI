@@ -82,7 +82,7 @@ public class GuideController {
 
     @ResponseBody
     @RequestMapping("/download")
-    public ResponseEntity<byte[]> downloadGuide(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ResponseEntity<byte[]> downloadGuide(HttpServletRequest request) throws IOException {
         ServletContext context = request.getSession().getServletContext();
         String realPath = context.getRealPath("/file/使用说明书.pdf");
         File file = new File(realPath);

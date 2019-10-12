@@ -186,7 +186,7 @@ public class UserService {
 
     public void updatePassword(String oldPassword, String newPassword, String codeCaptcha,
                                String oldCodeCaptcha, String ticket) throws COIPFDIExceptions {
-        User user = hostHolder.getUser();
+        User user = userDao.selectByName(currentUser.getName());
         if(!StringUtils.equals(user.getPassword(), oldPassword)){
             throw new COIPFDIExceptions(CodeEnum.USER_ERROR, "旧密码输入有误");
         }
@@ -196,6 +196,21 @@ public class UserService {
         userDao.updatePassword(user.getEmail(), newPassword);
         logout(ticket);
 
+    }
+
+    public User getUser(String name){
+        return userDao.selectByName(name);
+    }
+
+    public void updateUserInfo(String name,String phoneNum,String sex,
+                               String company,String address,String domain){
+        User user = userDao.selectByName(name);
+        user.setPhoneNum(phoneNum);
+        user.setSex(sex);
+        user.setCompany(company);
+        user.setAddress(address);
+        user.setDomain(domain);
+        userDao.updateInfo(user);
     }
 
     //分页

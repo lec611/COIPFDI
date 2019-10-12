@@ -271,14 +271,9 @@
                         </tr>
                         <tr>
                             <td>文件输出
-                                <button type="button" class="btn btn-default" id="btnFileOutput"
-                                        onclick="fileExcelOutput();">浏览
+                                <button type="button" class="btn btn-default" id="btnFileOutput" onclick="fileExcelOutput()">
+                                    <a href="${ctx}/calculate/outputExcel">浏览</a>
                                 </button>
-                                <%--                                <h2 class="layui-colla-title layui-btn-sm" style="background-color: #009688">浏览</h2>--%>
-                                <%--                                <div class="layui-colla-content">--%>
-                                <%--                                    <span class="layui-btn" data-status='1' onclick="filePDFOutput();">导出PDF</span>--%>
-                                <%--                                    <span class="layui-btn" data-status='0' onclick="fileExcelOutput();">导出Excel</span>--%>
-                                <%--                                </div>--%>
                             </td>
                         </tr>
                         <tr>
@@ -288,7 +283,7 @@
                 </div>
                 <div id="page">
                     <div class="panel panel-default" style="height:450px;">
-                        <div id="chartContainer" style="height:400px;width:500px;"></div>
+                        <div id="chartContainer" style="height:400px;width:450px;margin-left:20px;margin-rigth:20px;"></div>
                     </div>
                 </div>
             </div>
@@ -908,83 +903,6 @@
         );
     }
 
-    // 导出Excel文件
-    function fileExcelOutput() {
-        if (outputOpt == "表格输出") {
-            var array = new Array(15);
-            for (var i = 0; i < 7; i++) {
-                array[i] = document.getElementById(("data" + i).toString()).value;
-            }
-            for (var i = 0; i < 7; i++) {
-                array[7 + i] = document.getElementById(("weight" + i).toString()).value;
-            }
-            var typeObj = document.getElementById("type");
-            var typeindex = typeObj.selectedIndex;
-            var type = typeObj.options[typeindex].text;
-
-            var customizeObj = document.getElementById("customize");
-            var customizeindex = customizeObj.selectedIndex;
-            var customize = customizeObj.options[customizeindex].text;
-
-            $.ajax({
-                type: 'post',
-                url: '${ctx}/calculate/outputTable',
-                data: {"array": JSON.stringify(array), "type": type, "customize": customize},
-                responseType: 'blob',
-                success: function (res) {
-
-                    //console.log(res);
-
-                    //res 是后台返回的结果
-                    const content = res.data;
-                    const blob = new Blob([content]);
-                    const fileName = "融合指数测度表.xls"; //下载的文件名称
-                    if ('download' in document.createElement('a')) { // 非IE下载
-                        const elink = document.createElement('a');
-                        elink.download = fileName;
-                        elink.style.display = 'none';
-                        elink.href = URL.createObjectURL(blob);
-                        document.body.appendChild(elink);
-                        elink.click();
-                        URL.revokeObjectURL(elink.href); // 释放URL对象
-                        document.body.removeChild(elink);
-                    } else { // IE10+下载
-                        navigator.msSaveBlob(blob, fileName);
-                    }
-
-                    // const blob = new Blob([res.data], {type: "application/vnd.ms-excel"});//new Blob([res])中不加data就会返回[objece objece]内容（少取一层）
-                    // const fileName = '融合指数测度表.xlsx';//下载文件名称
-                    // const elink = document.createElement('a');
-                    // elink.download = fileName;
-                    // elink.style.display = 'none';
-                    // elink.href = URL.createObjectURL(blob);
-                    // document.body.appendChild(elink);
-                    // elink.click();
-                    // URL.revokeObjectURL(elink.href); // 释放URL 对象
-                    // document.body.removeChild(elink);
-
-                    // let blob = new Blob([res.data], {type: "application/vnd.ms-excel"});
-                    // let objectUrl = URL.createObjectURL(blob);
-                    // window.location.href = objectUrl;
-
-                    // const link = document.createElement('a');
-                    // let blob = new Blob([res.data],{type: 'application/ms-excel'});
-                    // link.style.display = 'none';
-                    // link.href = URL.createObjectURL(blob);
-                    // link.setAttribute('download', '用户_wjx.xlsx');
-                    // document.body.appendChild(link);
-                    // link.click();
-                    // document.body.removeChild(link);
-
-                }
-            });
-        } else if (outputOpt == "文件输出") {
-
-        } else {
-            alert("请先输入数据！");
-        }
-    }
-
     function editeDoc(docId) {
         location.href = '${ctx}/docOperation';
         window.localStorage.setItem('docId', docId);
@@ -1056,12 +974,16 @@
                 str += "]";
 
                 option = {
+                    title:{
+                        text:'饼图',
+                        x:'center'
+                    },
                     calculable: true,
                     series: [
                         {
                             name: '访问来源',
                             type: 'pie',
-                            radius: '55%',
+                            radius: '40%',
                             center: ['50%', '60%'],
                             data: eval(str),//序列，字典，列表
                             // [
@@ -1081,8 +1003,8 @@
     }
 
     function zhexianChart(result) {
-        var data = eval('(' + result + ')');
-        var year = data[0]['year'];
+        var data = eval('('+result+')');
+        var year=data[0]['year'];
 
         // 路径配置
         require.config({
@@ -1101,54 +1023,61 @@
                 // 基于准备好的dom，初始化echarts图表
                 var myChart = ec.init(document.getElementById('chartContainer'));
 
-                var str = "[";//结果
-                var strX = "";//横坐标
-                // var legendStr="{data:[";//折线代表名称
-                var legendData = [];
-                // for(var i=0;i<year-1;i++)
-                // {
-                //     // legendData[i]=data[year*i]['zoneNum'];
-                //     legendStr+="'"+data[year*i]['zoneNum']+"',";
-                // }
-                // legendStr+="'"+data[i*year]['zoneNum']+"'],},";
-                // legendData[i]=data[year*i]['zoneNum'];
-                // legendStr+=legendData+"],},";
-                // alert(legendStr);
-                for (var i = 0; i < year - 1; i++) {
-                    strX += data[i]['yearNum'];
+                var str="[";//结果
+                var strX="[";//横坐标
+                var legendStr="[";//折线代表名称
+                var i;
+                for(i=0;i<(data.length/year)-1;i++)
+                {
+                    legendStr+="'"+data[year*(i+1)-1]['zoneNum']+"',";
                 }
-                strX += data[i]['yearNum'];
-                for (var i = 0; i < (data.length / year); i++) {
-                    var arr = [];
-                    for (var j = 0; j < year; j++) {
-                        arr[j] = parseInt(data[i + j]['goal']);
+                legendStr+="'"+data[year*(i+1)-1]['zoneNum']+"'";
+                legendStr+="]";
+                for(var i=0;i<year-1;i++)
+                {
+                    strX+="'第"+data[i]['yearNum']+"年',";
+                }
+                strX+="'第"+data[i]['yearNum']+"年']";
+                var arr=[];
+                var j=0;
+                for(var i=0;i<data.length;i++)
+                {
+                    arr[j]=parseInt(data[i]['goal']);
+                    j++;
+                    if((i+1)%year==0){
+                        str+="{name:'"+data[i]['zoneNum']+"',type:'line',data:["+arr+"],itemStyle:{normal:{label:{show:true}}}},";
+                        j=0;
                     }
-                    str += "{name:'" + data[i]['zoneNum'] + "',type:'line',data:[" + arr + "]},";
                 }
-                str += "]";
+                str+="]";
                 option = {
+                    title:{
+                        text:'折线图',
+                        x:'center'
+                    },
                     calculable: true,
-                    // legend:legendStr,
-                    // legend:{
-                    //     data:['园区一','园区二','园区三'],
-                    // },
+                    legend:{
+                        orient:'horizontal',
+                        x:'center',
+                        y:'bottom',
+                        data:eval(legendStr)
+                    },
                     xAxis: [
                         {
+                            name:'年份',
                             type: 'category',
                             boundaryGap: false,
-                            data: strX
+                            data: eval(strX)
                             // ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
                         }
                     ],
                     yAxis: [
                         {
+                            name:'数值',
                             type: 'value',
-                            // axisLabel: {
-                            //     formatter: '{value}'
-                            // }
                         }
                     ],
-                    series: eval(str)
+                    series:eval(str)
                     //     [
                     //     {
                     //         name: '最高气温',
@@ -1210,6 +1139,10 @@
                 str1 += "],},]";
 
                 option = {
+                    title:{
+                        text:'雷达图',
+                        x:'center'
+                    },
                     polar: [
                         {
                             indicator: eval(str)
@@ -1270,9 +1203,10 @@
 
         var chart = new CanvasJS.Chart("chartContainer", {
             animationEnabled: true,
-            // title: {
-            //     text: title_text
-            // },
+            title: {
+                text: '柱状图',
+                x:'center'
+            },
             toolTip: {
                 shared: true
             },
@@ -1293,82 +1227,6 @@
             chart.render();
         }
     }
-
-    // function showLineChart(result) {
-    //     var data = eval('(' + result + ')');
-    //     var year = data[0]['year'];
-    //
-    //     charData = [];
-    //     risk = ["政治风险", "经济风险", "社会风险", "综合风险"];
-    //     var title_text;
-    //     // if (type == 0) {
-    //     //     title_text = data['country'];
-    //     for (var i = 0; i < data.length; i += 3) {
-    //         dataPts = [];
-    //         for (var j = i; j < (i + year); j++) {
-    //             var pts = {x: new Date(data[i]['yearNum'], 0, 0), y: data[i]['goal']};
-    //             dataPts.push(pts);
-    //         }
-    //         var line = {
-    //             type: "line",
-    //             name: risk[i],
-    //             showInLegend: true,
-    //             dataPoints: dataPts
-    //         };
-    //         charData.push(line);
-    //     }
-    //     // } else if (type == 1) {
-    //     //     for (var i = 0; i < data.length; i++) {
-    //     //         var str="[";
-    //     //         for(var j=0;j<year;j++)
-    //     //         {
-    //     //             str+="{label: "+data[j]['zoneNum']+", y: "+parseInt(data[j]['goal'])+"},";
-    //     //         }
-    //     //         str+="]";
-    //     //         // dataPts = [];
-    //     //         var column = {
-    //     //             type: "column",
-    //     //             name: data['zoneNum'][i] + data['yearNum'] + '年的数据',
-    //     //             legendText: "" + data['zoneNum'][i],
-    //     //             showInLegend: true,
-    //     //             dataPoints: str
-    //     //                 // [
-    //     //                 // {label: "经济风险", y: data['data'][i][1]},
-    //     //                 // {label: "社会风险", y: data['data'][i][2]},
-    //     //                 // {label: "综合风险", y: data['data'][i][3]},
-    //     //             // ]
-    //     //         };
-    //     //         charData.push(column);
-    //     //     }
-    //     // }
-    //
-    //     var chart = new CanvasJS.Chart("chartContainer", {
-    //         // title: {
-    //         //     text: data['country']
-    //         // },
-    //         axisX: {
-    //             valueFormatString: "YYYY"
-    //         },
-    //         toolTip: {
-    //             shared: true
-    //         },
-    //         legend: {
-    //             cursor: "pointer",
-    //             itemclick: toggleDataSeries
-    //         },
-    //         data: charData
-    //     });
-    //     chart.render();
-    //
-    //     function toggleDataSeries(e) {
-    //         if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-    //             e.dataSeries.visible = false;
-    //         } else {
-    //             e.dataSeries.visible = true;
-    //         }
-    //         e.chart.render();
-    //     }
-    // }
 
     function calculation() {
         debugger;
@@ -1465,7 +1323,6 @@
                 outputOpt = "文件输出";
                 alert("文件上传成功！");
                 result = resultD;
-                // showBarChart(result);
             },
             failure: function (data) {
                 alert(data + "文件上传失败！");
@@ -1473,6 +1330,36 @@
         })
     }
 
+    // 导出Excel文件
+    function fileExcelOutput() {
+        if (outputOpt == "表格输出") {
+            var array = new Array(15);
+            for (var i = 0; i < 7; i++) {
+                array[i] = document.getElementById(("data" + i).toString()).value;
+            }
+            for (var i = 0; i < 7; i++) {
+                array[7 + i] = document.getElementById(("weight" + i).toString()).value;
+            }
+            var typeObj = document.getElementById("type");
+            var typeindex = typeObj.selectedIndex;
+            var type = typeObj.options[typeindex].text;
+
+            var customizeObj = document.getElementById("customize");
+            var customizeindex = customizeObj.selectedIndex;
+            var customize = customizeObj.options[customizeindex].text;
+
+            $.ajax({
+                type: 'post',
+                url: '${ctx}/calculate/outputTable',
+                data: {"array": JSON.stringify(array), "type": type, "customize": customize},
+
+            });
+        } else if (outputOpt == "文件输出") {
+
+        } else {
+            alert("请输入新数据进行计算,即将导出的是历史数据文件！");
+        }
+    }
 
 </script>
 </html>

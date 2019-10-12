@@ -15,7 +15,7 @@ public interface UserDao {
 
     Integer persist(User user);
     Integer update(User user);
-    Integer completeInfo(User user);
+    Integer updateInfo(User user);
 
     @Select({"select",SELECT_FIELDS,"from",TABLE_NAME,"where id=#{id}"})
     User selectById(Integer id);
