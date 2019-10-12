@@ -1050,7 +1050,7 @@
 
                 var str = "[";
                 for (var i = 0; i < data.length; i++) {
-                    var temp = "{value: " + data[i]['goal'] + ", name: '" + data[i]['zoneNum'] + '' + data[i]['yearNum'] + '' + data[i]['goal'] + "'},";
+                    var temp = "{value: " + data[i]['goal'] + ", name: '" + data[i]['zoneNum'] + '第' + data[i]['yearNum'] + '年' + data[i]['goal'] + "'},";
                     str += temp;
                 }
                 str += "]";
@@ -1198,7 +1198,7 @@
 
                 var str = "[";
                 for (var i = 0; i < data.length; i++) {
-                    var temp = "{text: '" + data[i]['zoneNum'] + data[i]['yearNum'] + "', max: 100},";
+                    var temp = "{text: '" + data[i]['zoneNum'] + '第'+data[i]['yearNum'] + "年', max: 100},";
                     str += temp;
                 }
                 str += "]";
@@ -1249,7 +1249,7 @@
         for (var i = 0; i < data.length; i++) {
             var column = {
                 type: "column",
-                name: data[i]['zoneNum'] + '' + data[i]['yearNum'] + '的数据',
+                name: data[i]['zoneNum'] + '第' + data[i]['yearNum'] + '年的数据',
                 legendText: "" + data[i]['zoneNum'],
                 showInLegend: true,
                 dataPoints: [
