@@ -53,17 +53,7 @@
             </label>
             <span id="code_span" style="color: green"></span>
         </div>
-        <div class="layui-form-item">
-            <div class="layui-input-inline">
-                <input type="text" name="emailCaptcha" id="emailCaptcha" lay-verify="request"  placeholder="请输入邮箱验证码"
-                       autocomplete="off" class="layui-input">
-            </div>
-            <label class="field-wrap" style="float:left; margin-top: 6px;">
-                <button style="width: 100%;" class="layui-btn layui-btn-radius" id="sendEmail" onclick="return false;">发送邮件</button>
-            </label>
-            <label style="float:left; margin-top: 6px; display: none;" class="field-wrap layui-btn layui-btn-radius disableEmail" id="disableSendEmail">60s</label>
-        </div>
-        <button style="width: 100%;" class="layui-btn layui-btn-radius" lay-filter="submit" lay-submit="">找回密码</button>
+        <button style="width: 100%;" class="layui-btn layui-btn-radius" id="sendEmail" onclick="return false;">发送邮件</button>
     </form>
 </div>
 <!-- layui.js -->
@@ -88,81 +78,15 @@
         var codeCaptcha = $("#codeCaptcha").val();
         $.ajax({
             type: 'get',
-            url: '${ctx}/reglogin/emailCaptcha',
+            url: '${ctx}/reglogin/emailPassword',
             data: {"email": email, "codeCaptcha": codeCaptcha},
             dataType: 'json',
             success: function (data) {
-                if (data.code !== 200) {
-                    layer.msg(data.msg, {icon: 2});
-                    changeCaptcha();
-                    return false;
-                } else {
-                    suspendEmailService();
-                }
+                alert("您的密码已经发送到注册邮箱，请及时查看！");
             }
         });
         return false;
     }
-
-    function suspendEmailService() {
-        $("#sendEmail").hide();
-        $("#disableSendEmail").show();
-
-        var time = 60;
-        var p = $("#disableSendEmail")[0];
-        var set = setInterval(function () {
-            time--;
-            p.innerHTML = time + "s";
-            if (time === 0) {
-                $("#sendEmail").show();
-                $("#disableSendEmail").hide();
-                clearInterval(set);
-            }
-        }, 1000);
-    };
-
-    layui.use(['form', 'layer'], function() {
-        var form = layui.form;
-        var layer = layui.layer;
-        var $ = layui.jquery;
-
-        function checkInfo(email, codeCaptcha, emailCaptcha) {
-            if (email.trim() === "" || email.trim() == null) return "请输入注册邮箱！";
-            if (codeCaptcha === "" || codeCaptcha == null) return "请输入验证码！";
-            if (emailCaptcha === "" || emailCaptcha == null) return "请输入邮箱验证码！";
-            return "";
-        }
-
-        //监听提交
-        form.on('submit(submit)', function(){
-            var email = $("#email").val();
-            var codeCaptcha = $("#codeCaptcha").val();
-            var emailCaptcha = $("#emailCaptcha").val();
-            var hint = checkInfo(email, codeCaptcha, emailCaptcha);
-
-            if (hint !== "") {
-                layer.msg(hint, {icon:2});
-                return false;
-            }
-
-            $.ajax({
-                type: 'get',
-                url: '${ctx}/reglogin/findPassword',
-                data: {"email": email, "codeCaptcha": codeCaptcha, "emailCaptcha": emailCaptcha},
-                dataType: 'json',
-                success: function (data) {
-                    if (data.code !== 200) {
-                        layer.msg(data.msg, {icon: 2});
-                        changeCaptcha();
-                        return false;
-                    } else {
-                        window.location.href = "${ctx}/updatePassword.jsp";
-                    }
-                }
-            });
-            return false;
-        });
-    });
 
 </script>
 </body>
