@@ -239,7 +239,7 @@ public class CalculatorController {
                 JSONObject object = new JSONObject();
                 object.put("year",year);
                 object.put("zoneNum", "园区" + (i / year + 1));
-                object.put("yearNum", "第" + (i % year + 1) + "年");
+                object.put("yearNum", (i % year + 1) );
                 object.put("goal", new DecimalFormat("#.0000").format(goal));
                 array.add(object);
             }
