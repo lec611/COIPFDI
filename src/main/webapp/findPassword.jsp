@@ -7,7 +7,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>COIPFDI - 找回密码</title>
+    <title>OICPFDI - 找回密码</title>
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4,
@@ -36,7 +36,7 @@
 
 <body class="login-bg">
 <div class="login layui-anim layui-anim-up" style="min-height: 0;">
-    <div class="message">COIPFDI - 找回密码</div>
+    <div class="message">OICPFDI - 找回密码</div>
     <div id="darkbannerwrap"></div>
     <form class="layui-form" action="" method="post">
         <input type="text" name="email" id="email" lay-verify="request|email" placeholder="请输入注册邮箱"

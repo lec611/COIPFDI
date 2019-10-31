@@ -9,7 +9,7 @@
     <meta http-equiv="Content-Type" content="text/html; Charset=gb2312">
     <meta http-equiv="Content-Language" content="zh-CN">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
-    <title>COIPFDI</title>
+    <title>OICPFDI</title>
     <link rel="stylesheet" href="static/plug/layui/css/layui.css">
     <%--网页图标--%>
     <link rel="shortcut icon" href="static/images/COIPIB.png" type="image/x-icon">
@@ -45,7 +45,7 @@
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header position: absolute;">
         <a href="${ctx}/index.jsp">
-            <div class="layui-logo doc-logo" style="font-weight: bold">COIPFDI</div>
+            <div class="layui-logo doc-logo" style="font-weight: bold">OICPFDI</div>
         </a>
         <ul class="layui-nav layui-layout-left small-head-nav-left">
             <li class="layui-nav-item"><a href="javascript:;"></a></li>
@@ -270,9 +270,9 @@
                             <td><b>结果输出</b></td>
                         </tr>
                         <tr>
-                            <td>文件输出
+                            <td>
                                 <button type="button" class="btn btn-default" id="btnFileOutput" onclick="fileExcelOutput()">
-                                    <a href="${ctx}/calculate/outputExcel">浏览</a>
+                                    <a href="${ctx}/calculate/outputExcel">文件输出</a>
                                 </button>
                             </td>
                         </tr>
@@ -357,7 +357,7 @@
     })
 
     function aboutSoftware() {
-        alert("软件名称：Web中国境外产业园区融合化发展指数测度软件（简称 COIPFDI）\n" +
+        alert("软件名称：Web境外合作园区融合化发展指数测度软件（简称 OICPFDI）\n" +
             "软件版本号：V1.0\n" +
             "开发机构：东南大学\n" +
             "开发人员：王兴平、赵四东、张茜、王慧、张冬烨\n" +
